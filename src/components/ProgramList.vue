@@ -19,6 +19,18 @@ export default {
       currentDate: this.$moment().format("YYYY-MM-DD")
     };
   },
+  computed: {
+    currentChannel: {
+      get: function() {
+        return this.$store.state.currentChannel;
+      }
+    },
+    date: {
+      get: function() {
+        return this.$store.state.date;
+      }
+    }
+  },
   methods: {
     getPrograms(channelCode, shortName, Date) {
       this.$axios
@@ -52,7 +64,6 @@ export default {
             }
             this.programList = response.data.data;
           }
-          console.log(response.data.data[2].resourceUrl);
         })
         .catch(error => {
           console.log(error);
@@ -68,6 +79,18 @@ export default {
   },
   mounted() {
     this.getPrograms(1, "zjws", this.currentDate);
+  },
+  watch: {
+    currentChannel(data) {
+      this.getPrograms(data.channelId, data.channelShortName, this.currentDate);
+    },
+    date(data) {
+      this.getPrograms(
+        this.$store.state.currentChannel.channelId,
+        this.$store.state.currentChannel.channelShortName,
+        data
+      );
+    }
   }
 };
 </script>

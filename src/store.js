@@ -11,7 +11,8 @@ export default new Vuex.Store({
     initType: "application/x-mpegURL",
     isDialogVisible: false,
     isLoginIn: false,
-    date: null
+    date: null,
+    currentChannel: []
   },
   mutations: {
     showDialog(state) {
@@ -29,6 +30,9 @@ export default new Vuex.Store({
     changeStream(state, payload) {
       state.player.src = payload.streamSrc;
       state.player.type = payload.streamType;
+    },
+    getCurrentChannel(state, payload) {
+      state.currentChannel = payload.currentChannel;
     },
     changeDate(state, payload) {
       state.date = payload.date;

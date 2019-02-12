@@ -5,8 +5,8 @@
         <li
           v-for="(item,index) in videoChannelList"
           :key="index"
-          @click="changeStream(index)"
-        >{{item}}</li>
+          @click="changeStream(index),getCurrentChannel(item)"
+        >{{item.channelName}}</li>
       </ul>
     </div>
     <div v-else></div>
@@ -19,10 +19,8 @@ export default {
     return {
       isVideo: this.$store.state.isVideo,
       videoChannelList: [],
-      videoChannelListShort: [],
       videoStream: [],
       audioChannelList: [],
-      audioChannelListShort: [],
       audioStream: []
     };
   },
@@ -42,8 +40,11 @@ export default {
                 let videoChannelShortName = response.data.data[i].name.split(
                   "-"
                 )[1];
-                this.videoChannelList.push(videoChannelName);
-                this.videoChannelListShort.push(videoChannelShortName);
+                this.videoChannelList.push({
+                  channelName: videoChannelName,
+                  channelId: response.data.data[i].id,
+                  channelShortName: videoChannelShortName
+                });
                 this.videoStream.push(
                   "http://10.20.50.127/jtjk/" +
                     response.data.data[i].uri.substring(24) +
@@ -54,8 +55,11 @@ export default {
                 let audioChannelShortName = response.data.data[i].name.split(
                   "-"
                 )[1];
-                this.audioChannelList.push(audioChannelName);
-                this.audioChannelListShort.push(audioChannelShortName);
+                this.audioChannelList.push({
+                  channelName: audioChannelName,
+                  channelId: response.data.data.id,
+                  channelShortName: audioChannelShortName
+                });
                 this.audioStream.push(
                   "http://10.20.50.127/" +
                     response.data.data[i].uri.substring(18) +
@@ -75,6 +79,12 @@ export default {
         type: "changeStream",
         streamSrc: this.videoStream[index],
         streamType: "application/x-mpegURL"
+      });
+    },
+    getCurrentChannel(currentChannel) {
+      this.$store.commit({
+        type: "getCurrentChannel",
+        currentChannel: currentChannel
       });
     },
     actionSuccess(success) {
