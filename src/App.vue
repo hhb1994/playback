@@ -2,8 +2,14 @@
   <div id="app">
     <Header/>
     <div id="container">
-      <Player/>
-      <ChannelList/>
+      <div>
+        <Player/>
+        <Info/>
+      </div>
+      <div>
+        <Sort/>
+        <ChannelList/>
+      </div>
       <div>
         <DatePicker/>
         <ProgramList/>
@@ -34,6 +40,8 @@ import Footer from "./components/Footer.vue";
 import ChannelList from "./components/ChannelList.vue";
 import ProgramList from "./components/ProgramList.vue";
 import DatePicker from "./components/DatePicker.vue";
+import Sort from "./components/Sort.vue";
+import Info from "./components/Info.vue";
 
 export default {
   name: "app",
@@ -43,7 +51,9 @@ export default {
     Footer,
     ChannelList,
     ProgramList,
-    DatePicker
+    DatePicker,
+    Sort,
+    Info
   },
   computed: {
     dialogVisible: {
@@ -63,11 +73,13 @@ export default {
     };
   },
   methods: {
+    // 隐藏登录弹框
     hideDialog() {
       this.$store.commit({
         type: "hideDialog"
       });
     },
+    // 登录操作
     login() {
       if (this.username == "" || this.userpwd == "") {
         this.actionFailed("账户与密码不能为空!");
@@ -114,6 +126,9 @@ export default {
         message: fail
       });
     }
+  },
+  mounted: {
+    
   }
 };
 </script>

@@ -28,7 +28,7 @@ export default {
         fluid: true,
         sources: [
           {
-            type: this.$store.state.initType,
+            type: "application/x-mpegURL",
             src: this.$store.state.initStream
           }
         ],

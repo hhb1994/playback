@@ -9,7 +9,15 @@
         >{{item.channelName}}</li>
       </ul>
     </div>
-    <div v-else></div>
+    <div v-else>
+      <ul>
+        <li
+          v-for="(item,index) in audioChannelList"
+          :key="index"
+          @click="changeStream(index),getCurrentChannel(item)"
+        >{{item.channelName}}</li>
+      </ul>
+    </div>
   </div>
 </template>
 <script>
@@ -17,12 +25,18 @@ export default {
   name: "ChannelList",
   data() {
     return {
-      isVideo: this.$store.state.isVideo,
       videoChannelList: [],
       videoStream: [],
       audioChannelList: [],
       audioStream: []
     };
+  },
+  computed: {
+    isVideo: {
+      get: function() {
+        return this.$store.state.isVideo;
+      }
+    }
   },
   methods: {
     getChannelList() {
@@ -57,7 +71,7 @@ export default {
                 )[1];
                 this.audioChannelList.push({
                   channelName: audioChannelName,
-                  channelId: response.data.data.id,
+                  channelId: response.data.data[i].id,
                   channelShortName: audioChannelShortName
                 });
                 this.audioStream.push(
@@ -73,13 +87,29 @@ export default {
           this.actionFailed("获取节目信息出错!");
           console.log(error);
         });
+      this.$store.commit({
+        type: "getCurrentChannel",
+        currentChannel: {
+          channelName: "浙江卫视高清",
+          channelId: 1,
+          channelShortName: "zjws"
+        }
+      });
     },
     changeStream(index) {
-      this.$store.commit({
-        type: "changeStream",
-        streamSrc: this.videoStream[index],
-        streamType: "application/x-mpegURL"
-      });
+      if (this.isVideo) {
+        this.$store.commit({
+          type: "changeStream",
+          streamSrc: this.videoStream[index],
+          streamType: "application/x-mpegURL"
+        });
+      } else {
+        this.$store.commit({
+          type: "changeStream",
+          streamSrc: this.audioStream[index],
+          streamType: "application/x-mpegURL"
+        });
+      }
     },
     getCurrentChannel(currentChannel) {
       this.$store.commit({

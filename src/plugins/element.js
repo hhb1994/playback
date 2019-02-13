@@ -1,6 +1,7 @@
 import Vue from "vue";
 import {
   Button,
+  ButtonGroup,
   Notification,
   Dialog,
   Form,
@@ -15,4 +16,5 @@ Vue.use(Form);
 Vue.use(FormItem);
 Vue.use(Input);
 Vue.use(DatePicker);
+Vue.use(ButtonGroup);
 Vue.prototype.$notify = Notification;
