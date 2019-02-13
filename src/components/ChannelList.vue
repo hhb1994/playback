@@ -5,8 +5,11 @@
         <li
           v-for="(item,index) in videoChannelList"
           :key="index"
-          @click="changeStream(index),getCurrentChannel(item)"
-        >{{item.channelName}}</li>
+          @click="changeStream(index),getCurrentChannel(item),bindClass(index)"
+        >
+          <img :src="item.videoImgSrc">
+          <span>{{item.channelName}}</span>
+        </li>
       </ul>
     </div>
     <div v-else>
@@ -15,7 +18,10 @@
           v-for="(item,index) in audioChannelList"
           :key="index"
           @click="changeStream(index),getCurrentChannel(item)"
-        >{{item.channelName}}</li>
+        >
+          <img :src="item.audioImgSrc">
+          <span>{{item.channelName}}</span>
+        </li>
       </ul>
     </div>
   </div>
@@ -39,6 +45,7 @@ export default {
     }
   },
   methods: {
+    // 获取直播频道列表,并根据广播/电视分类
     getChannelList() {
       this.$axios
         .get("http://10.20.15.165:8080/jtjk/channels", { timeout: 5000 })
@@ -57,7 +64,10 @@ export default {
                 this.videoChannelList.push({
                   channelName: videoChannelName,
                   channelId: response.data.data[i].id,
-                  channelShortName: videoChannelShortName
+                  channelShortName: videoChannelShortName,
+                  videoImgSrc: require(`@/assets/icons/${
+                    response.data.data[i].id
+                  }.png`)
                 });
                 this.videoStream.push(
                   "http://10.20.50.127/jtjk/" +
@@ -72,7 +82,10 @@ export default {
                 this.audioChannelList.push({
                   channelName: audioChannelName,
                   channelId: response.data.data[i].id,
-                  channelShortName: audioChannelShortName
+                  channelShortName: audioChannelShortName,
+                  audioImgSrc: require(`@/assets/icons/${
+                    response.data.data[i].id
+                  }.png`)
                 });
                 this.audioStream.push(
                   "http://10.20.50.127/" +
@@ -81,6 +94,11 @@ export default {
                 );
               }
             }
+            // for (let i = 0; i < this.videoChannelList.length; i++) {
+            //   this.videoChannelList.push({
+            //     videoImgSrc: `/static/images/${i}.png`
+            //   });
+            // }
           }
         })
         .catch(error => {
@@ -96,6 +114,7 @@ export default {
         }
       });
     },
+    // 切换直播源
     changeStream(index) {
       if (this.isVideo) {
         this.$store.commit({
@@ -111,6 +130,8 @@ export default {
         });
       }
     },
+    bindClass(index) {},
+    // 获取当前正在播放的频道信息
     getCurrentChannel(currentChannel) {
       this.$store.commit({
         type: "getCurrentChannel",
@@ -143,7 +164,7 @@ export default {
   height 500px
   overflow-y auto
   background-color black
-  width 174px
+  width 194px
   cursor pointer
   border-right 1px solid rgb(31, 31, 31)
   &::-webkit-scrollbar
@@ -151,7 +172,23 @@ export default {
   &::-webkit-scrollbar-track
     border-radius 1px
     background-color darkgray
-  &::-webkit-scrollbar-thumb
+  &::scrollbar-thumb
     border-radius 1px
     background white
+  li
+    height 35px
+    color white
+    font-weight 600
+    margin-top 0.1rem
+    vertical-align middle
+    &:hover
+      background-color rgb(31, 31, 31)
+      transition 300ms
+  img
+    max-height 100%
+    width 40px
+    padding-left 1rem
+    padding-right 0.5rem
+    vertical-align middle
+    min-height 20px
 </style>

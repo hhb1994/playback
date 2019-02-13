@@ -1,11 +1,9 @@
 <template>
   <div id="programlist">
     <ul>
-      <li
-        v-for="(item,index) in programList"
-        :key="index"
-        @click="playFile(item)"
-      >{{item.startTime}}{{item.name}}</li>
+      <li v-for="(item,index) in programList" :key="index" @click="playFile(item)">
+        <div>{{item.startTime}} {{item.name}}</div>
+      </li>
     </ul>
   </div>
 </template>
@@ -134,10 +132,26 @@ export default {
 </script>
 <style lang="stylus" scoped>
 #programlist
+  cursor pointer
   color white
   height 499px
   overflow-y auto
   width 210px
   border-bottom 1px solid black
   border-right 1px solid black
+  ul li
+    font-size 10px
+    height 30px
+    border-bottom 1px solid black
+    padding-top 10px
+    padding-left 10px
+    transition 300ms
+    &:hover
+      height 35px
+      div
+        white-space normal
+    div
+      white-space nowrap
+      overflow hidden
+      text-overflow ellipsis
 </style>

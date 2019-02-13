@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="sort">
     <el-button-group>
       <el-button type="primary" round @click="switchStreamType(true)">电视</el-button>
       <el-button type="primary" round @click="switchStreamType(false)">广播</el-button>
@@ -50,4 +50,7 @@ export default {
   }
 };
 </script>
-
+<style lang="stylus" scoped>
+#sort
+  margin-left 10px
+</style>
