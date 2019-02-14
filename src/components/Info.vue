@@ -1,5 +1,6 @@
 <template>
   <div id="info">
+    <el-button type="primary" round>节目信息</el-button>
     <span>{{currentChannel}} </span>
     <span>{{currentProgram.date}} </span>
     <span>{{currentProgram.startTime}} </span>
@@ -26,4 +27,7 @@ export default {
 <style lang="stylus" scoped>
 #info
   color white
+  padding 10px
+  .el-button
+    margin-right 10px
 </style>

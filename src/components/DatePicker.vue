@@ -14,16 +14,36 @@ export default {
   name: "DatePicker",
   data() {
     return {
-      date: ""
+      date: "",
+      currentDate: this.$moment().format("YYYY-MM-DD")
     };
+  },
+  methods: {
+    actionSuccess(success) {
+      this.$notify({
+        title: "SUCCESS",
+        message: success,
+        type: "success"
+      });
+    },
+    actionFailed(fail) {
+      this.$notify.error({
+        title: "FAILED",
+        message: fail
+      });
+    }
   },
   watch: {
     date(data) {
-      console.log(data);
-      this.$store.commit({
-        type: "changeDate",
-        date: data
-      });
+      if (data > this.currentDate) {
+        this.actionFailed(`日期不能超过${this.currentDate}`);
+        this.date = "";
+      } else {
+        this.$store.commit({
+          type: "changeDate",
+          date: data
+        });
+      }
     }
   }
 };

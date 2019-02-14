@@ -19,7 +19,7 @@ export default {
     return {
       // 视频播放
       playerOptions: {
-        playbackRates: [0.7, 1.0, 1.5, 2.0],
+        playbackRates: [0.7, 1.0, 1.5, 2.0, 5.0],
         autoplay: true,
         loop: false,
         preload: "auto",

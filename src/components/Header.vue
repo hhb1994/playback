@@ -20,7 +20,7 @@ export default {
 #header
   width 100%
   height 60px
-  background-color #008eff
+  background-color #409EFF
   color white
   p
     font-size 24px

@@ -15,7 +15,10 @@ export default new Vuex.Store({
 
     date: null,
     currentChannel: [],
-    currentProgram: []
+    currentProgram: [],
+
+    channelIndex: 0,
+    programIndex: 0
   },
   mutations: {
     // 登录弹出框显示
@@ -54,6 +57,14 @@ export default new Vuex.Store({
     // 切换电视/广播
     switchStreamType(state, payload) {
       state.isVideo = payload.streamType;
+    },
+    // 更改频道class
+    changeChannelIndex(state, payload) {
+      state.channelIndex = payload.channelIndex;
+    },
+    // 更改节目class
+    changeProgramIndex(state, payload) {
+      state.programIndex = payload.programIndex;
     }
   },
   actions: {}

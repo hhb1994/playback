@@ -6,6 +6,7 @@
           v-for="(item,index) in videoChannelList"
           :key="index"
           @click="changeStream(index),getCurrentChannel(item),bindClass(index)"
+          :class="{'channelActive':channelIndex === index}"
         >
           <img :src="item.videoImgSrc">
           <span>{{item.channelName}}</span>
@@ -17,7 +18,8 @@
         <li
           v-for="(item,index) in audioChannelList"
           :key="index"
-          @click="changeStream(index),getCurrentChannel(item)"
+          @click="changeStream(index),getCurrentChannel(item),bindClass(index)"
+          :class="{'channelActive':channelIndex === index}"
         >
           <img :src="item.audioImgSrc">
           <span>{{item.channelName}}</span>
@@ -41,6 +43,11 @@ export default {
     isVideo: {
       get: function() {
         return this.$store.state.isVideo;
+      }
+    },
+    channelIndex: {
+      get: function() {
+        return this.$store.state.channelIndex;
       }
     }
   },
@@ -94,11 +101,6 @@ export default {
                 );
               }
             }
-            // for (let i = 0; i < this.videoChannelList.length; i++) {
-            //   this.videoChannelList.push({
-            //     videoImgSrc: `/static/images/${i}.png`
-            //   });
-            // }
           }
         })
         .catch(error => {
@@ -130,24 +132,30 @@ export default {
         });
       }
     },
-    bindClass(index) {},
+    bindClass(index) {
+      this.$store.commit({
+        type: "changeChannelIndex",
+        channelIndex: index
+      });
+    },
     // 获取当前正在播放的频道信息
     getCurrentChannel(currentChannel) {
       this.$store.commit({
         type: "getCurrentChannel",
         currentChannel: currentChannel
       });
+      this.actionSuccess(`直播源已切换到: ${currentChannel.channelName}`);
     },
     actionSuccess(success) {
       this.$notify({
-        title: "成功",
+        title: "SUCCESS",
         message: success,
         type: "success"
       });
     },
     actionFailed(fail) {
       this.$notify.error({
-        title: "失败",
+        title: "FAILED",
         message: fail
       });
     }
@@ -167,14 +175,6 @@ export default {
   width 194px
   cursor pointer
   border-right 1px solid rgb(31, 31, 31)
-  &::-webkit-scrollbar
-    width 1px
-  &::-webkit-scrollbar-track
-    border-radius 1px
-    background-color darkgray
-  &::scrollbar-thumb
-    border-radius 1px
-    background white
   li
     height 35px
     color white
@@ -187,8 +187,20 @@ export default {
   img
     max-height 100%
     width 40px
-    padding-left 1rem
+    padding-left 0.3rem
     padding-right 0.5rem
     vertical-align middle
     min-height 20px
+.channelActive
+  background-color rgb(31, 31, 31)
+  border-left 3px solid #409EFF
+  transition 300ms
+#channelList::-webkit-scrollbar
+  width 2px
+#channelList::-webkit-scrollbar-track
+  border-radius 1px
+  background-color darkgrey
+#channelList::-webkit-scrollbar-thumb
+  border-radius 1px
+  background white
 </style>

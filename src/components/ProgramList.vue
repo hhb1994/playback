@@ -1,8 +1,15 @@
 <template>
   <div id="programlist">
     <ul>
-      <li v-for="(item,index) in programList" :key="index" @click="playFile(item)">
-        <div>{{item.startTime}} {{item.name}}</div>
+      <li
+        v-for="(item,index) in programList"
+        :key="index"
+        @click="playFile(item,$event),bindClass(index)"
+        :class="{'programActive':programIndex === index}"
+      >
+        <div
+          :class="(((item.date+item.startTime) >= currentTime))?'programListNotActive':'programListActive'"
+        >{{item.startTime}} {{item.name}}</div>
       </li>
     </ul>
   </div>
@@ -14,10 +21,16 @@ export default {
     return {
       token: document.cookie.split(";")[0].split("=")[1],
       programList: [],
-      currentDate: this.$moment().format("YYYY-MM-DD")
+      currentDate: this.$moment().format("YYYY-MM-DD"),
+      currentTime: this.$moment().format("YYYY-MM-DDHH:mm:ss")
     };
   },
   computed: {
+    programIndex: {
+      get: function() {
+        return this.$store.state.programIndex;
+      }
+    },
     currentChannel: {
       get: function() {
         return this.$store.state.currentChannel;
@@ -52,7 +65,7 @@ export default {
               let day = Date.split("-")[2];
               let type = this.isVideo ? "mp4" : "mp3";
               for (let i = 0; i < response.data.data.length; i++) {
-                let j = i < 10 ? 0 + i : i;
+                let j = i < 10 ? "0" + i : i;
                 response.data.data[i].date = this.currentDate;
                 response.data.data[
                   i
@@ -79,6 +92,10 @@ export default {
                   type: "getCurrentProgram",
                   currentProgram: response.data.data[i - 1]
                 });
+                this.$store.commit({
+                  type: "changeProgramIndex",
+                  programIndex: i - 1
+                });
 
                 document.getElementById("programlist").scrollTo({
                   behavior: "smooth",
@@ -93,23 +110,47 @@ export default {
           console.log(error);
         });
     },
-    playFile(item) {
-      if (this.isVideo) {
-        this.$store.commit({
-          type: "changeStream",
-          streamSrc: item.resourceUrl,
-          streamType: "video/mp4"
-        });
+    playFile(item, event) {
+      if (event.target.className.split(" ")[0] == "programListNotActive") {
+        this.actionFailed("此节目还没有收录");
       } else {
+        this.actionSuccess(`开始播放: ${item.name}`);
+        if (this.isVideo) {
+          this.$store.commit({
+            type: "changeStream",
+            streamSrc: item.resourceUrl,
+            streamType: "video/mp4"
+          });
+        } else {
+          this.$store.commit({
+            type: "changeStream",
+            streamSrc: item.resourceUrl,
+            streamType: "audio/mp3"
+          });
+        }
         this.$store.commit({
-          type: "changeStream",
-          streamSrc: item.resourceUrl,
-          streamType: "audio/mp3"
+          type: "getCurrentProgram",
+          currentProgram: item
         });
       }
+    },
+    bindClass(index) {
       this.$store.commit({
-        type: "getCurrentProgram",
-        currentProgram: item
+        type: "changeProgramIndex",
+        programIndex: index
+      });
+    },
+    actionSuccess(success) {
+      this.$notify({
+        title: "SUCCESS",
+        message: success,
+        type: "success"
+      });
+    },
+    actionFailed(fail) {
+      this.$notify.error({
+        title: "FAILED",
+        message: fail
       });
     }
   },
@@ -132,6 +173,7 @@ export default {
 </script>
 <style lang="stylus" scoped>
 #programlist
+  margin-left 5px
   cursor pointer
   color white
   height 499px
@@ -154,4 +196,22 @@ export default {
       white-space nowrap
       overflow hidden
       text-overflow ellipsis
+.programListNotActive
+  color gray
+  cursor not-allowed
+.programListActive
+  color white
+  cursor pointer
+.programActive
+  background-color rgb(31, 31, 31)
+  border-left 3px solid #008eff
+  transition 300ms
+#programlist::-webkit-scrollbar
+  width 2px
+#programlist::-webkit-scrollbar-track
+  border-radius 1px
+  background-color darkgray
+#programlist::-webkit-scrollbar-thumb
+  border-radius 1px
+  background white
 </style>

@@ -15,6 +15,10 @@ export default {
         type: "switchStreamType",
         streamType: streamType
       });
+      this.$store.commit({
+        type: "changeChannelIndex",
+        channelIndex: 0
+      });
       if (streamType) {
         this.$store.commit({
           type: "changeStream",
@@ -52,5 +56,7 @@ export default {
 </script>
 <style lang="stylus" scoped>
 #sort
+  background-color black
   margin-left 10px
+  padding-left 20px
 </style>
