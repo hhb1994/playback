@@ -9,6 +9,13 @@
 <script>
 export default {
   name: "Sort",
+  computed: {
+    isLoginIn: {
+      get: function() {
+        return this.$store.state.isLoginIn;
+      }
+    }
+  },
   methods: {
     switchStreamType(streamType) {
       this.$store.commit({
@@ -26,14 +33,16 @@ export default {
           streamType: "application/x-mpegURL"
         });
 
-        this.$store.commit({
-          type: "getCurrentChannel",
-          currentChannel: {
-            channelName: "浙江卫视高清",
-            channelId: 1,
-            channelShortName: "zjws"
-          }
-        });
+        if (this.isLoginIn) {
+          this.$store.commit({
+            type: "getCurrentChannel",
+            currentChannel: {
+              channelName: "浙江卫视高清",
+              channelId: 1,
+              channelShortName: "zjws"
+            }
+          });
+        }
       } else {
         this.$store.commit({
           type: "changeStream",
@@ -41,14 +50,16 @@ export default {
           streamType: "application/x-mpegURL"
         });
 
-        this.$store.commit({
-          type: "getCurrentChannel",
-          currentChannel: {
-            channelName: "浙江之声",
-            channelId: 12,
-            channelShortName: "fm88"
-          }
-        });
+        if (this.isLoginIn) {
+          this.$store.commit({
+            type: "getCurrentChannel",
+            currentChannel: {
+              channelName: "浙江之声",
+              channelId: 12,
+              channelShortName: "fm88"
+            }
+          });
+        }
       }
     }
   }

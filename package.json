@@ -1,6 +1,7 @@
 {
   "name": "playback",
   "version": "0.1.0",
+  "author":"韩宏斌",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",

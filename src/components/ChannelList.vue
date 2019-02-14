@@ -49,6 +49,11 @@ export default {
       get: function() {
         return this.$store.state.channelIndex;
       }
+    },
+    isLoginIn: {
+      get: function() {
+        return this.$store.state.isLoginIn;
+      }
     }
   },
   methods: {
@@ -60,7 +65,6 @@ export default {
           if (response.data.code != 200) {
             this.actionFailed("无法获取频道信息!");
           } else {
-            this.actionSuccess("获取频道信息成功!");
             response.data.data.reverse();
             for (let i = 0; i < response.data.data.length; i++) {
               if (response.data.data[i].group.name == "arcvideo") {
@@ -140,23 +144,27 @@ export default {
     },
     // 获取当前正在播放的频道信息
     getCurrentChannel(currentChannel) {
-      this.$store.commit({
-        type: "getCurrentChannel",
-        currentChannel: currentChannel
-      });
+      if (this.isLoginIn) {
+        this.$store.commit({
+          type: "getCurrentChannel",
+          currentChannel: currentChannel
+        });
+      }
       this.actionSuccess(`直播源已切换到: ${currentChannel.channelName}`);
     },
     actionSuccess(success) {
       this.$notify({
         title: "SUCCESS",
         message: success,
-        type: "success"
+        type: "success",
+        position: "top-left"
       });
     },
     actionFailed(fail) {
       this.$notify.error({
         title: "FAILED",
-        message: fail
+        message: fail,
+        position: "top-left"
       });
     }
   },

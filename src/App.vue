@@ -4,31 +4,36 @@
     <div id="container">
       <div>
         <Player/>
-        <Info/>
+        <div v-if="isLoginIn">
+          <Info/>
+        </div>
+        <div v-else style="color:white;padding-top:20px">登录以查看节目单及当前节目信息</div>
       </div>
       <div>
         <Sort/>
         <ChannelList/>
       </div>
-      <div>
+      <div v-if="isLoginIn">
         <DatePicker/>
         <ProgramList/>
       </div>
     </div>
     <Footer/>
     <el-dialog title="登录" :visible.sync="dialogVisible">
-      <el-form>
-        <el-form-item label="账户名称">
-          <el-input v-model="username"></el-input>
-        </el-form-item>
-        <el-form-item label="密 码">
-          <el-input v-model="userpwd" type="password"></el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-button @click="hideDialog()">取 消</el-button>
-          <el-button type="primary" @click="login()">确 定</el-button>
-        </el-form-item>
-      </el-form>
+      <div id="dialogForm">
+        <el-form>
+          <el-form-item label="账 户 :" label-width="80px">
+            <el-input v-model="username"></el-input>
+          </el-form-item>
+          <el-form-item label="密 码 :" label-width="80px">
+            <el-input v-model="userpwd" type="password"></el-input>
+          </el-form-item>
+          <el-form-item id="buttonGroup">
+            <el-button @click="hideDialog()">取 消</el-button>
+            <el-button type="primary" @click="login()">确 定</el-button>
+          </el-form-item>
+        </el-form>
+      </div>
     </el-dialog>
   </div>
 </template>
@@ -63,6 +68,11 @@ export default {
       set: function() {
         this.$store.commit({ type: "hideDialog" });
       }
+    },
+    isLoginIn: {
+      get: function() {
+        return this.$store.state.isLoginIn;
+      }
     }
   },
   data() {
@@ -94,8 +104,12 @@ export default {
           )
           .then(response => {
             if (response.data.code != 200) {
-              this.actionFailed("登录失败,可能是由于账号或者密码错误,请重试!");
+              this.actionFailed(
+                "登录失败!可能原因:1.账户或者密码错误;2.未开通权限;3.服务器错误"
+              );
             } else {
+              this.username = "";
+              this.userpwd = "";
               let date = new Date();
               let expireMinutes = 120;
               date.setTime(date.getTime() + expireMinutes * 60000);
@@ -113,22 +127,32 @@ export default {
           .catch(error => console.log(error));
       }
     },
+    checkCookie() {
+      if (document.cookie.split(";")[0].split("=")[1]) {
+        this.$store.commit({
+          type: "changeLoginInState",
+          isLoginIn: true
+        });
+      }
+    },
     actionSuccess(success) {
       this.$notify({
-        title: "成功",
+        title: "SUCCESS",
         message: success,
-        type: "success"
+        type: "success",
+        position: "top-left"
       });
     },
     actionFailed(fail) {
       this.$notify.error({
-        title: "失败",
-        message: fail
+        title: "FAILED",
+        message: fail,
+        position: "top-left"
       });
     }
   },
-  mounted: {
-    
+  mounted() {
+    this.checkCookie();
   }
 };
 </script>
@@ -138,4 +162,9 @@ export default {
     margin-top 30px
     display flex
     justify-content center
+  #dialogForm
+    width 50%
+    margin-left 25%
+    #buttonGroup
+      margin-left 40%
 </style>

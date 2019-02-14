@@ -109,12 +109,13 @@ export default {
         .catch(error => {
           console.log(error);
         });
+      console.log(this.token);
     },
     playFile(item, event) {
       if (event.target.className.split(" ")[0] == "programListNotActive") {
         this.actionFailed("此节目还没有收录");
       } else {
-        this.actionSuccess(`开始播放: ${item.name}`);
+        this.actionSuccess(`开始播放文件: ${item.name}`);
         if (this.isVideo) {
           this.$store.commit({
             type: "changeStream",
@@ -144,13 +145,15 @@ export default {
       this.$notify({
         title: "SUCCESS",
         message: success,
-        type: "success"
+        type: "success",
+        position: "top-left"
       });
     },
     actionFailed(fail) {
       this.$notify.error({
         title: "FAILED",
-        message: fail
+        message: fail,
+        position: "top-left"
       });
     }
   },
