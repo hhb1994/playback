@@ -68,6 +68,7 @@ export default new Vuex.Store({
     changeProgramIndex(state, payload) {
       state.programIndex = payload.programIndex;
     },
+    // 更改 loading 状态
     changeLoadingState(state, payload) {
       state.isLoading = payload.isLoading;
     }

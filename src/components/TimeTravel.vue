@@ -1,7 +1,10 @@
 <template>
-  <div>
-    <!-- <input v-model="value" type="range" step="1" min="1" max="1000"> -->
-    <el-slider v-model="value" :max="max" :show-tooltip="false" :disabled="disabled"></el-slider>
+  <div id="timetravel">
+    <div>{{currentChannel.channelName}} </div>
+    <el-slider v-model="value" :max="max" :show-tooltip="true" :disabled="disabled"></el-slider>
+    <div id="scale">
+      <div v-for="(item ,index) in scale" :key="index">{{item}}</div>
+    </div>
   </div>
 </template>
 <script>
@@ -11,45 +14,70 @@ export default {
   data() {
     return {
       value: 0,
+      valueLimit:
+        (Date.parse(new Date()) -
+          Date.parse(this.$moment().format("YYYY-MM-DD"))) /
+        10000,
       max: 8640,
-      disabled: false
+      disabled: false,
+      year: this.$moment().format("YYYY"),
+      month: this.$moment().format("MM"),
+      day: this.$moment().format("DD"),
+      scale: [
+        "00:00:00",
+        "03:00:00",
+        "06:00:00",
+        "09:00:00",
+        "12:00:00",
+        "15:00:00",
+        "18:00:00",
+        "21:00:00",
+        "24:00:00"
+      ]
     };
   },
   computed: {
     currentTime() {
-      let year = this.$moment().format("YYYY");
-      let month = this.$moment().format("MM");
-      let day = this.$moment().format("DD");
       let currentTime =
         Date.parse(this.$moment().format("YYYY-MM-DD")) + this.value * 10000;
-      let hour =
-        new Date(currentTime).getUTCHours() < 10
-          ? "0" + new Date(currentTime).getUTCHours()
-          : new Date(currentTime).getUTCHours();
-      let minute =
-        new Date(currentTime).getUTCMinutes() < 10
-          ? "0" + new Date(currentTime).getUTCMinutes()
-          : new Date(currentTime).getUTCMinutes();
-      let second =
-        new Date(currentTime).getUTCSeconds() < 10
-          ? "0" + new Date(currentTime).getUTCSeconds()
-          : new Date(currentTime).getUTCSeconds();
-      let timestamp = year + month + day + hour + minute + second;
+      let hour = this.addZero(new Date(currentTime).getUTCHours());
+      let minute = this.addZero(new Date(currentTime).getUTCMinutes());
+      let second = this.addZero(new Date(currentTime).getUTCSeconds());
+      let timestamp =
+        this.year + this.month + this.day + hour + minute + second;
       return timestamp;
+    },
+    currentChannel: {
+      get: function() {
+        return this.$store.state.currentChannel;
+      }
     }
   },
   methods: {
+    addZero(val) {
+      return val < 10 ? "0" + val : val;
+    },
     formatDate(val) {
       return val;
     },
+    beginTimeTravel: debounce(function() {
+      this.disabled = true;
+      this.$store.commit({
+        type: "changeLoadingState",
+        isLoading: true
+      });
+      this.timeTralvel();
+    }, 1000),
     timeTralvel() {
       this.$axios
         .get(
           `http://10.20.50.127:8080/zbsy/GetM3U8?timestamp=${
             this.currentTime
-          }&program=hnws`
+          }&program=hnws`,
+          { timeout: 20000 }
         )
         .then(response => {
+          this.actionSuccess("请求时移成功!");
           this.disabled = false;
           this.$store.commit({
             type: "changeStream",
@@ -61,25 +89,46 @@ export default {
             isLoading: false
           });
         })
-        .catch(error => console.log(error));
+        .catch(error => {
+          console.log(error);
+          this.actionFailed("请求直播时移错误!");
+          this.disabled = false;
+          this.$store.commit({
+            type: "changeLoadingState",
+            isLoading: false
+          });
+        });
     },
-    change: debounce(function() {
-      this.disabled = true;
-      this.$store.commit({
-        type: "changeLoadingState",
-        isLoading: true
+    actionSuccess(success) {
+      this.$notify({
+        title: "SUCCESS",
+        message: success,
+        type: "success",
+        position: "top-left"
       });
-      this.timeTralvel();
-    }, 1000)
+    },
+    actionFailed(fail) {
+      this.$notify.error({
+        title: "FAILED",
+        message: fail,
+        position: "top-left"
+      });
+    }
   },
   watch: {
     currentTime() {
-      this.change();
+      this.beginTimeTravel();
     }
   }
 };
 </script>
 <style lang="stylus" scoped>
-input
-  width 800px
+.el-slider
+  width 960px
+#timetravel
+  color white
+#scale
+  display flex
+  justify-content space-between
+  width 960px
 </style>

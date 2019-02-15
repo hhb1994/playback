@@ -2,7 +2,7 @@
   <div
     id="app"
     v-loading="loading"
-    element-loading-text="拼命加载中"
+    element-loading-text="拼命加载中..."
     element-loading-spinner="el-icon-loading"
     element-loading-background="rgba(0, 0, 0, 0.8)"
   >
@@ -172,6 +172,7 @@ export default {
 </script>
 <style lang="stylus" scoped>
 #app
+  height 100%
   #container
     margin-top 30px
     display flex
