@@ -65,13 +65,14 @@ export default {
               let day = Date.split("-")[2];
               let type = this.isVideo ? "mp4" : "mp3";
               for (let i = 0; i < response.data.data.length; i++) {
-                let j = i < 10 ? "0" + i : i;
+                let hours = response.data.data[i].startTime.split(":")[0];
+                let minutes = response.data.data[i].startTime.split(":")[1];
                 response.data.data[i].date = this.currentDate;
                 response.data.data[
                   i
                 ].resourceUrl = `http://10.20.50.124/${shortName}/${year}/${month}/${day}/${
                   response.data.data[i].name
-                }-${j}0000.${type}`;
+                }-${hours}${minutes}00.${type}`;
               }
             } else {
               for (let i = 0; i < response.data.data.length; i++) {
@@ -109,7 +110,6 @@ export default {
         .catch(error => {
           console.log(error);
         });
-      console.log(this.token);
     },
     playFile(item, event) {
       if (event.target.className.split(" ")[0] == "programListNotActive") {

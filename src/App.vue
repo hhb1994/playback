@@ -1,12 +1,18 @@
 <template>
-  <div id="app">
+  <div
+    id="app"
+    v-loading="loading"
+    element-loading-text="拼命加载中"
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(0, 0, 0, 0.8)"
+  >
     <Header/>
     <div id="container">
       <div>
         <Player/>
         <div v-if="isLoginIn">
           <Info/>
-          <TimeTravel/> 
+          <TimeTravel/>
         </div>
         <div v-else style="color:white;padding-top:20px">登录以查看节目单及当前节目信息</div>
       </div>
@@ -75,6 +81,11 @@ export default {
     isLoginIn: {
       get: function() {
         return this.$store.state.isLoginIn;
+      }
+    },
+    loading: {
+      get: function() {
+        return this.$store.state.isLoading;
       }
     }
   },

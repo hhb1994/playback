@@ -41,7 +41,6 @@ export default {
         this.actionFailed(`节目单查询的日期不能超过 ${this.currentDate}`);
         this.date = "";
       } else {
-        this.actionSuccess(`节目单查询日期已切换到: ${data}`);
         this.$store.commit({
           type: "changeDate",
           date: data

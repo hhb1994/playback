@@ -17,6 +17,7 @@ Vue.prototype.$axios = axios;
 Vue.use(VueVideoPlayer);
 
 Vue.prototype.$moment = moment;
+
 Vue.config.productionTip = false;
 
 new Vue({

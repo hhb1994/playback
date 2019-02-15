@@ -8,7 +8,8 @@ import {
   FormItem,
   Input,
   DatePicker,
-  Slider
+  Slider,
+  Loading
 } from "element-ui";
 
 Vue.use(Button);
@@ -19,4 +20,5 @@ Vue.use(Input);
 Vue.use(DatePicker);
 Vue.use(ButtonGroup);
 Vue.use(Slider);
+Vue.use(Loading);
 Vue.prototype.$notify = Notification;
