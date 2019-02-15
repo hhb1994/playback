@@ -7,7 +7,8 @@ import {
   Form,
   FormItem,
   Input,
-  DatePicker
+  DatePicker,
+  Slider
 } from "element-ui";
 
 Vue.use(Button);
@@ -17,4 +18,5 @@ Vue.use(FormItem);
 Vue.use(Input);
 Vue.use(DatePicker);
 Vue.use(ButtonGroup);
+Vue.use(Slider);
 Vue.prototype.$notify = Notification;

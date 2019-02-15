@@ -6,6 +6,7 @@
         <Player/>
         <div v-if="isLoginIn">
           <Info/>
+          <TimeTravel/> 
         </div>
         <div v-else style="color:white;padding-top:20px">登录以查看节目单及当前节目信息</div>
       </div>
@@ -47,6 +48,7 @@ import ProgramList from "./components/ProgramList.vue";
 import DatePicker from "./components/DatePicker.vue";
 import Sort from "./components/Sort.vue";
 import Info from "./components/Info.vue";
+import TimeTravel from "./components/TimeTravel.vue";
 
 export default {
   name: "app",
@@ -58,7 +60,8 @@ export default {
     ProgramList,
     DatePicker,
     Sort,
-    Info
+    Info,
+    TimeTravel
   },
   computed: {
     dialogVisible: {
