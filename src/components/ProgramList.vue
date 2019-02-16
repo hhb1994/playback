@@ -115,6 +115,10 @@ export default {
       if (event.target.className.split(" ")[0] == "programListNotActive") {
         this.actionFailed("此节目还没有收录");
       } else {
+        this.$store.commit({
+          type: "changeTimeTravelState",
+          isTimeTravel: false
+        });
         this.actionSuccess(`开始播放文件: ${item.name}`);
         if (this.isVideo) {
           this.$store.commit({

@@ -9,6 +9,7 @@ export default new Vuex.Store({
     player: null,
     initStream: "http://10.20.50.127:8081/hnws/20190215041212.m3u8",
     initStream2: "http://10.20.50.127/fm88_audio/128k.m3u8",
+    videoStream: [],
     isDialogVisible: false,
 
     isLoginIn: false,
@@ -20,7 +21,9 @@ export default new Vuex.Store({
     channelIndex: 0,
     programIndex: 0,
 
-    isLoading: false
+    isLoading: false,
+    isTimeTravel: false,
+    streamToDestory: {}
   },
   mutations: {
     // 登录弹出框显示
@@ -30,6 +33,10 @@ export default new Vuex.Store({
     // 登录弹出框隐藏
     hideDialog(state) {
       state.isDialogVisible = false;
+    },
+    // 获取所有视频直播流
+    getAllVideoStream(state, payload) {
+      state.videoStream = payload.videoStream;
     },
     // 改变登录状态
     changeLoginInState(state, payload) {
@@ -71,6 +78,15 @@ export default new Vuex.Store({
     // 更改 loading 状态
     changeLoadingState(state, payload) {
       state.isLoading = payload.isLoading;
+    },
+    //更改是否是时移状态
+    changeTimeTravelState(state, payload) {
+      state.isTimeTravel = payload.isTimeTravel;
+    },
+    // 获取待销毁的直播流
+    getStreamToDestory(state, payload) {
+      state.streamToDestory.streamUri = payload.uri;
+      state.streamToDestory.shortName = payload.shortName;
     }
   },
   actions: {}

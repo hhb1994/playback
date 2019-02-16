@@ -1,10 +1,11 @@
 <template>
   <div id="info">
     <el-button type="primary" round>节目信息</el-button>
-    <span>{{currentChannel}} </span>
-    <span>{{currentProgram.date}} </span>
-    <span>{{currentProgram.startTime}} </span>
+    <span>{{currentChannel}}</span>
+    <span>{{currentProgram.date}}</span>
+    <span>{{currentProgram.startTime}}</span>
     <span>{{currentProgram.name}}</span>
+    <el-button class="showTimeTravel" round @click="showTimeTravel()" v-if="isVideo">开启直播时移</el-button>
   </div>
 </template>
 <script>
@@ -20,6 +21,19 @@ export default {
       get: function() {
         return this.$store.state.currentProgram;
       }
+    },
+    isVideo:{
+      get: function() {
+        return this.$store.state.isVideo;
+      }
+    }
+  },
+  methods: {
+    showTimeTravel() {
+      this.$store.commit({
+        type: "changeTimeTravelState",
+        isTimeTravel: true
+      });
     }
   }
 };
@@ -30,4 +44,6 @@ export default {
   padding 10px
   .el-button
     margin-right 10px
+  .showTimeTravel
+    margin-left 20px
 </style>

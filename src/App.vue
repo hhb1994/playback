@@ -11,8 +11,10 @@
       <div>
         <Player/>
         <div v-if="isLoginIn">
-          <Info/>
-          <TimeTravel/>
+          <Info v-if="!isTimeTravel"/>
+          <div v-else>
+            <TimeTravel v-if="isVideo"/>
+          </div>
         </div>
         <div v-else style="color:white;padding-top:20px">登录以查看节目单及当前节目信息</div>
       </div>
@@ -86,6 +88,16 @@ export default {
     loading: {
       get: function() {
         return this.$store.state.isLoading;
+      }
+    },
+    isTimeTravel: {
+      get: function() {
+        return this.$store.state.isTimeTravel;
+      }
+    },
+    isVideo: {
+      get: function() {
+        return this.$store.state.isVideo;
       }
     }
   },

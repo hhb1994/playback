@@ -5,7 +5,7 @@
         <li
           v-for="(item,index) in videoChannelList"
           :key="index"
-          @click="changeStream(index),getCurrentChannel(item),bindClass(index)"
+          @click="changeStream(index),getCurrentChannel(item),bindClass(index),backToLive()"
           :class="{'channelActive':channelIndex === index}"
         >
           <img :src="item.videoImgSrc">
@@ -119,6 +119,10 @@ export default {
           channelShortName: "zjws"
         }
       });
+      this.$store.commit({
+        type: "getAllVideoStream",
+        videoStream: this.videoStream
+      });
     },
     // 切换直播源
     changeStream(index) {
@@ -142,7 +146,7 @@ export default {
         channelIndex: index
       });
     },
-    // 获取当前正在播放的频道信息
+    // 提交当前正在播放的频道信息
     getCurrentChannel(currentChannel) {
       if (this.isLoginIn) {
         this.$store.commit({
@@ -151,6 +155,12 @@ export default {
         });
       }
       this.actionSuccess(`直播源已切换到: ${currentChannel.channelName}`);
+    },
+    backToLive() {
+      this.$store.commit({
+        type: "changeTimeTravelState",
+        isTimeTravel: false
+      });
     },
     actionSuccess(success) {
       this.$notify({

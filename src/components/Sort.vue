@@ -19,6 +19,10 @@ export default {
   methods: {
     switchStreamType(streamType) {
       this.$store.commit({
+        type: "changeTimeTravelState",
+        isTimeTravel: false
+      });
+      this.$store.commit({
         type: "switchStreamType",
         streamType: streamType
       });

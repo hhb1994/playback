@@ -1,7 +1,10 @@
 <template>
   <div id="timetravel">
-    <div>{{currentChannel.channelName}} </div>
-    <el-slider v-model="value" :max="max" :show-tooltip="true" :disabled="disabled"></el-slider>
+    <div>
+      <span>{{currentChannel.channelName}}</span>
+      <el-button @click="hideTimeTravel()" round>返回直播</el-button>
+    </div>
+    <el-slider v-model="value" :max="max" :show-tooltip="false" :disabled="disabled"></el-slider>
     <div id="scale">
       <div v-for="(item ,index) in scale" :key="index">{{item}}</div>
     </div>
@@ -51,14 +54,26 @@ export default {
       get: function() {
         return this.$store.state.currentChannel;
       }
+    },
+    channelIndex: {
+      get: function() {
+        return this.$store.state.channelIndex;
+      }
     }
   },
   methods: {
     addZero(val) {
       return val < 10 ? "0" + val : val;
     },
-    formatDate(val) {
-      return val;
+    hideTimeTravel() {
+      this.$store.commit({
+        type: "changeTimeTravelState",
+        isTimeTravel: false
+      });
+      this.$store.commit({
+        type: "changeStream",
+        streamSrc: this.$store.state.videoStream[this.channelIndex]
+      });
     },
     beginTimeTravel: debounce(function() {
       this.disabled = true;
@@ -69,11 +84,16 @@ export default {
       this.timeTralvel();
     }, 1000),
     timeTralvel() {
+      this.$store.commit({
+        type: "getStreamToDestory",
+        uri: this.currentTime,
+        shortName: this.currentChannel.channelShortName
+      });
       this.$axios
         .get(
           `http://10.20.50.127:8080/zbsy/GetM3U8?timestamp=${
             this.currentTime
-          }&program=hnws`,
+          }&program=${this.currentChannel.channelShortName}`,
           { timeout: 20000 }
         )
         .then(response => {
@@ -125,7 +145,10 @@ export default {
 <style lang="stylus" scoped>
 .el-slider
   width 960px
+.el-button
+  margin-left 20px
 #timetravel
+  margin-top 20px
   color white
 #scale
   display flex

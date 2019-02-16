@@ -4,8 +4,8 @@
       <p>监听监看回放系统</p>
     </div>
     <div id="buttonGroup">
-      <el-button @click="showDialog()" v-if="!isLoginIn">登录</el-button>
-      <el-button @click="logOut()" v-else>注销</el-button>
+      <el-button @click="showDialog()" v-if="!isLoginIn" round>登录</el-button>
+      <el-button @click="logOut()" v-else round>注销</el-button>
     </div>
   </div>
 </template>
