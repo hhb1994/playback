@@ -51,13 +51,14 @@ export default {
     getPrograms(channelCode, shortName, Date) {
       this.$axios
         .get(
-          `http://10.20.15.165:8080/jtjk/programs/${channelCode}/${Date}`
+          `http://10.20.15.165:8080/jtjk/programs/${channelCode}/${Date}`,
 
-          //   { headers: { Authorization: token } }
+          { headers: { Authorization: this.token } }
         )
         .then(response => {
           if (response.data.code != 200) {
-            alert("获取频道信息失败");
+            this.actionFailed("找不到当前频道的节目单");
+            this.programList = [];
           } else {
             if (response.data.data[0].channelCode >= 12) {
               let year = Date.split("-")[0];

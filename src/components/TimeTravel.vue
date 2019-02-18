@@ -1,8 +1,8 @@
 <template>
   <div id="timetravel">
     <div>
-      <span>{{currentChannel.channelName}}</span>
-      <el-button @click="hideTimeTravel()" round>返回直播</el-button>
+      <span>{{currentChannel.channelName}}(拖动下方进度条来实现当天任意时间段时移)</span>
+      <el-button @click="hideTimeTravel()" round><i class="el-icon-arrow-left"></i>返回直播</el-button>
     </div>
     <el-slider v-model="value" :max="max" :show-tooltip="false" :disabled="disabled"></el-slider>
     <div id="scale">
@@ -74,6 +74,15 @@ export default {
         type: "changeStream",
         streamSrc: this.$store.state.videoStream[this.channelIndex]
       });
+      this.$axios
+        .get(
+          `http://10.20.50.127:8080/zbsy/CloseThread?m3u8Name=${
+            this.currentTime
+          }&program=${this.currentChannel.channelShortName}`,
+          { timeout: 20000 }
+        )
+        .then(response => console.log(response.data))
+        .catch(error => console.log(error));
     },
     beginTimeTravel: debounce(function() {
       this.disabled = true;

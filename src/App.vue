@@ -28,14 +28,18 @@
       </div>
     </div>
     <Footer/>
-    <el-dialog title="登录" :visible.sync="dialogVisible">
+    <el-dialog title="登录监听监看回放系统" :visible.sync="dialogVisible">
       <div id="dialogForm">
         <el-form>
-          <el-form-item label="账 户 :" label-width="80px">
+          <el-form-item label="账 户 :" label-width="60px">
             <el-input v-model="username"></el-input>
           </el-form-item>
-          <el-form-item label="密 码 :" label-width="80px">
+          <el-form-item label="密 码 :" label-width="60px">
             <el-input v-model="userpwd" type="password"></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="text" @click="help()">忘记密码?</el-button><span> | </span>
+            <el-button type="text" @click="help()">无法登陆?</el-button>
           </el-form-item>
           <el-form-item id="buttonGroup">
             <el-button @click="hideDialog()">取 消</el-button>
@@ -109,6 +113,10 @@ export default {
     };
   },
   methods: {
+    // 帮助
+    help() {
+      this.actionFailed("请联系融媒体技术中心系统研发部!");
+    },
     // 隐藏登录弹框
     hideDialog() {
       this.$store.commit({

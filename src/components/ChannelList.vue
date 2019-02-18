@@ -154,7 +154,6 @@ export default {
           currentChannel: currentChannel
         });
       }
-      this.actionSuccess(`直播源已切换到: ${currentChannel.channelName}`);
     },
     backToLive() {
       this.$store.commit({
