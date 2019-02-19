@@ -81,9 +81,9 @@ export default {
                   }.png`)
                 });
                 this.videoStream.push(
-                  "http://10.20.50.127/jtjk/" +
-                    response.data.data[i].uri.substring(24) +
-                    ".m3u8"
+                  "http://10.20.50.127:8081/" +
+                    videoChannelShortName +
+                    "/index.m3u8"
                 );
               } else {
                 let audioChannelName = response.data.data[i].name.split("-")[0];
@@ -99,9 +99,9 @@ export default {
                   }.png`)
                 });
                 this.audioStream.push(
-                  "http://10.20.50.127/" +
-                    response.data.data[i].uri.substring(18) +
-                    ".m3u8"
+                  "http://10.20.50.127:8081/" +
+                    audioChannelShortName +
+                    "/index.m3u8"
                 );
               }
             }

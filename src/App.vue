@@ -38,7 +38,8 @@
             <el-input v-model="userpwd" type="password"></el-input>
           </el-form-item>
           <el-form-item>
-            <el-button type="text" @click="help()">忘记密码?</el-button><span> | </span>
+            <el-button type="text" @click="help()">忘记密码?</el-button>
+            <span>|</span>
             <el-button type="text" @click="help()">无法登陆?</el-button>
           </el-form-item>
           <el-form-item id="buttonGroup">
@@ -187,6 +188,7 @@ export default {
   },
   mounted() {
     this.checkCookie();
+    console.log("asdasda");
   }
 };
 </script>

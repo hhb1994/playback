@@ -5,7 +5,9 @@
     <span>{{currentProgram.date}}</span>
     <span>{{currentProgram.startTime}}</span>
     <span>{{currentProgram.name}}</span>
-    <el-button class="showTimeTravel" round @click="showTimeTravel()" v-if="isVideo">直播时移<i class="el-icon-arrow-right"></i></el-button>
+    <el-button class="showTimeTravel" round @click="showTimeTravel()" v-if="isVideo">直播时移
+      <i class="el-icon-arrow-right"></i>
+    </el-button>
   </div>
 </template>
 <script>
@@ -22,7 +24,7 @@ export default {
         return this.$store.state.currentProgram;
       }
     },
-    isVideo:{
+    isVideo: {
       get: function() {
         return this.$store.state.isVideo;
       }

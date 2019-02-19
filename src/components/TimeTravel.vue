@@ -2,7 +2,9 @@
   <div id="timetravel">
     <div>
       <span>{{currentChannel.channelName}}(拖动下方进度条来实现当天任意时间段时移)</span>
-      <el-button @click="hideTimeTravel()" round><i class="el-icon-arrow-left"></i>返回直播</el-button>
+      <el-button @click="hideTimeTravel()" round>
+        <i class="el-icon-arrow-left"></i>返回直播
+      </el-button>
     </div>
     <el-slider v-model="value" :max="max" :show-tooltip="false" :disabled="disabled"></el-slider>
     <div id="scale">
@@ -17,35 +19,44 @@ export default {
   data() {
     return {
       value: 0,
-      valueLimit:
+      valueLimit: ~~(
         (Date.parse(new Date()) -
-          Date.parse(this.$moment().format("YYYY-MM-DD"))) /
-        10000,
+          Date.parse(this.$moment().format("YYYY/MM/DD"))) /
+        10000
+      ),
       max: 8640,
       disabled: false,
       year: this.$moment().format("YYYY"),
       month: this.$moment().format("MM"),
       day: this.$moment().format("DD"),
       scale: [
-        "00:00:00",
-        "03:00:00",
-        "06:00:00",
-        "09:00:00",
-        "12:00:00",
-        "15:00:00",
-        "18:00:00",
-        "21:00:00",
-        "24:00:00"
+        "00:00",
+        "01:30",
+        "03:00",
+        "04:30",
+        "06:00",
+        "07:30",
+        "09:00",
+        "10:30",
+        "12:00",
+        "13:30",
+        "15:00",
+        "16:30",
+        "18:00",
+        "19:30",
+        "21:00",
+        "22:30",
+        "24:00"
       ]
     };
   },
   computed: {
     currentTime() {
       let currentTime =
-        Date.parse(this.$moment().format("YYYY-MM-DD")) + this.value * 10000;
-      let hour = this.addZero(new Date(currentTime).getUTCHours());
-      let minute = this.addZero(new Date(currentTime).getUTCMinutes());
-      let second = this.addZero(new Date(currentTime).getUTCSeconds());
+        Date.parse(this.$moment().format("YYYY/MM/DD")) + this.value * 10000;
+      let hour = this.addZero(new Date(currentTime).getHours());
+      let minute = this.addZero(new Date(currentTime).getMinutes());
+      let second = this.addZero(new Date(currentTime).getSeconds());
       let timestamp =
         this.year + this.month + this.day + hour + minute + second;
       return timestamp;
@@ -58,6 +69,11 @@ export default {
     channelIndex: {
       get: function() {
         return this.$store.state.channelIndex;
+      }
+    },
+    streamToDestory: {
+      get: function() {
+        return this.$store.state.streamToDestory;
       }
     }
   },
@@ -74,30 +90,41 @@ export default {
         type: "changeStream",
         streamSrc: this.$store.state.videoStream[this.channelIndex]
       });
+      this.destoryStream();
+    },
+    beginTimeTravel: debounce(function() {
+      this.destoryStream();
+      if (this.value < this.valueLimit) {
+        this.disabled = true;
+        this.$store.commit({
+          type: "changeLoadingState",
+          isLoading: true
+        });
+        this.timeTralvel();
+      } else if (this.value > this.valueLimit) {
+        this.actionFailed("直播时移不能超过当前时间!");
+        this.value = this.valueLimit;
+      } else {
+        return;
+      }
+    }, 780),
+    destoryStream() {
       this.$axios
         .get(
           `http://10.20.50.127:8080/zbsy/CloseThread?m3u8Name=${
-            this.currentTime
-          }&program=${this.currentChannel.channelShortName}`,
+            this.streamToDestory.streamUri
+          }&program=${this.streamToDestory.shortName}`,
           { timeout: 20000 }
         )
-        .then(response => console.log(response.data))
         .catch(error => console.log(error));
     },
-    beginTimeTravel: debounce(function() {
-      this.disabled = true;
-      this.$store.commit({
-        type: "changeLoadingState",
-        isLoading: true
-      });
-      this.timeTralvel();
-    }, 1000),
     timeTralvel() {
       this.$store.commit({
         type: "getStreamToDestory",
         uri: this.currentTime,
         shortName: this.currentChannel.channelShortName
       });
+
       this.$axios
         .get(
           `http://10.20.50.127:8080/zbsy/GetM3U8?timestamp=${
@@ -148,6 +175,9 @@ export default {
     currentTime() {
       this.beginTimeTravel();
     }
+  },
+  mounted() {
+    this.value = this.valueLimit;
   }
 };
 </script>

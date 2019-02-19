@@ -43,7 +43,8 @@ export default {
   height 60px
   background-color #409EFF
   color white
-  p
+  p 
+    width 200px
     font-size 24px
     padding-top 14px
     padding-left 40px

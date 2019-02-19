@@ -88,6 +88,5 @@ export default new Vuex.Store({
       state.streamToDestory.streamUri = payload.uri;
       state.streamToDestory.shortName = payload.shortName;
     }
-  },
-  actions: {}
+  }
 });
