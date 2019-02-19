@@ -188,7 +188,19 @@ export default {
   },
   mounted() {
     this.checkCookie();
-    console.log("asdasda");
+
+    console.log("%cMOZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ8M", "color: blue");
+    console.log("%cMZZZZZZZZZZZZO7+==?ZZZZZZZZZZZZZZM", "color: blue");
+    console.log("%cMZZZZZZZZZ=..        ?ZZZZZZZZZZZM", "color: blue");
+    console.log("%cMZZZZZZ?.            :ZZZZZZZ?:.:M", "color: blue");
+    console.log("%cMZZZZZ.     .:+.    .ZZZ=.......,M", "color: blue");
+    console.log("%cMZZZZ.   .7ZZZZ.   ,$..         ,M", "color: blue");
+    console.log("%cMZZZZ..$ZZZZZ,    .   .. ~?7$ZZZZM", "color: blue");
+    console.log("%cMZZZZZZZZZZ$.      ,+ZZZZZZZZZZZZM", "color: blue");
+    console.log("%cMZZZZZZZZZ+    .?ZZZZZZZZZZZZZZZZM", "color: blue");
+    console.log("%cMZZZZZZZZ7  :$ZZZZZZZZZZZZZZZZZZOM", "color: blue");
+    console.log("%cMOZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ8M", "color: blue");
+    console.log("%c由融媒体技术中心-系统研发部倾情开发~", "color:red");
   }
 };
 </script>
