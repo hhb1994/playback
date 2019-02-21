@@ -7,8 +7,8 @@ export default new Vuex.Store({
   state: {
     isVideo: true,
     player: null,
-    initStream: "http://10.20.50.127:8081/hnws/20190215041212.m3u8",
-    initStream2: "http://10.20.50.127/fm88_audio/128k.m3u8",
+    initStream: "http://10.20.50.127:8081/zjws/index.m3u8",
+    initStream2: "http://10.20.50.127:8081/fm88/index.m3u8",
     videoStream: [],
     isDialogVisible: false,
 
