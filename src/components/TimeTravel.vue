@@ -2,7 +2,7 @@
   <div id="timetravel">
     <div>
       <span>{{currentChannel.channelName}}(拖动下方进度条来实现当天任意时间段时移)</span>
-      <el-button @click="hideTimeTravel()" round>
+      <el-button @click="hideTimeTravel()" type="text">
         <i class="el-icon-arrow-left"></i>返回直播
       </el-button>
     </div>

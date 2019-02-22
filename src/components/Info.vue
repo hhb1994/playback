@@ -5,7 +5,7 @@
     <span>{{currentProgram.date}}</span>
     <span>{{currentProgram.startTime}}</span>
     <span>{{currentProgram.name}}</span>
-    <el-button class="showTimeTravel" round @click="showTimeTravel()" v-if="isVideo">直播时移
+    <el-button class="showTimeTravel" type="text" @click="showTimeTravel()" v-show="isVideo">直播时移
       <i class="el-icon-arrow-right"></i>
     </el-button>
   </div>
@@ -45,7 +45,10 @@ export default {
   color white
   padding 10px
   .el-button
+    margin-left 10px
     margin-right 10px
   .showTimeTravel
-    margin-left 20px
+    margin-left 10px
+  .el-button__item
+    height 10px
 </style>
