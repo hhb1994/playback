@@ -68,7 +68,7 @@ export default {
               for (let i = 0; i < response.data.data.length; i++) {
                 let hours = response.data.data[i].startTime.split(":")[0];
                 let minutes = response.data.data[i].startTime.split(":")[1];
-                response.data.data[i].date = this.currentDate;
+                response.data.data[i].date = this.date;
                 response.data.data[
                   i
                 ].resourceUrl = `http://10.20.50.124/${shortName}/${year}/${month}/${day}/${
@@ -184,7 +184,7 @@ export default {
   margin-left 5px
   cursor pointer
   color white
-  height 499px
+  height 489px
   overflow-y auto
   width 210px
   border-bottom 1px solid black

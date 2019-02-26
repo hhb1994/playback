@@ -1,6 +1,7 @@
 <template>
-  <div>
+  <div id="picker-container">
     <el-date-picker
+      id="picker"
       v-model="date"
       type="date"
       placeholder="选择日期"
@@ -47,6 +48,26 @@ export default {
         });
       }
     }
+  },
+  mounted() {
+    this.$store.commit({ type: "changeDate", date: this.currentDate });
   }
 };
 </script>
+<style>
+#picker-container {
+  width: 210px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+#picker {
+  border-radius: 20px;
+  width: 180px;
+}
+#picker input {
+  padding: 3px;
+}
+</style>
+

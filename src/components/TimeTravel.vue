@@ -2,7 +2,7 @@
   <div id="timetravel">
     <div>
       <span>{{currentChannel.channelName}}(拖动下方进度条来实现当天任意时间段时移)</span>
-      <el-button @click="hideTimeTravel()" type="text">
+      <el-button id="back" @click="hideTimeTravel()" type="text">
         <i class="el-icon-arrow-left"></i>返回直播
       </el-button>
     </div>
@@ -89,6 +89,10 @@ export default {
       this.$store.commit({
         type: "changeStream",
         streamSrc: this.$store.state.videoStream[this.channelIndex]
+      });
+      this.$store.commit({
+        type: "getCurrentProgram",
+        currentProgram: ""
       });
       this.destoryStream();
     },
@@ -193,4 +197,7 @@ export default {
   display flex
   justify-content space-between
   width 960px
+#back{
+  font-size 20px
+}
 </style>

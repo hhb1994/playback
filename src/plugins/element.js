@@ -9,10 +9,14 @@ import {
   Input,
   DatePicker,
   Slider,
-  Loading
+  Loading,
+  RadioButton,
+  RadioGroup
 } from "element-ui";
 
 Vue.use(Button);
+Vue.use(RadioButton);
+Vue.use(RadioGroup);
 Vue.use(Dialog);
 Vue.use(Form);
 Vue.use(FormItem);

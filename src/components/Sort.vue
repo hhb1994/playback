@@ -1,18 +1,34 @@
 <template>
   <div id="sort">
-    <el-button-group>
-      <el-button type="primary" round @click="switchStreamType(true)">电视</el-button>
-      <el-button type="primary" round @click="switchStreamType(false)">广播</el-button>
-    </el-button-group>
+    <el-radio-group id="sortradio" :value="isVideo">
+      <el-radio-button :label="true" type="primary" round @click.native="switchStreamType(true)">电视</el-radio-button>
+      <el-radio-button
+        :label="false"
+        type="primary"
+        round
+        @click.native="switchStreamType(false)"
+      >广播</el-radio-button>
+    </el-radio-group>
   </div>
 </template>
 <script>
 export default {
   name: "Sort",
+  data() {
+    return {
+      isTrue: true,
+      isFalse: false
+    };
+  },
   computed: {
     isLoginIn: {
       get: function() {
         return this.$store.state.isLoginIn;
+      }
+    },
+    isVideo: {
+      get: function() {
+        return this.$store.state.isVideo;
       }
     }
   },
@@ -71,7 +87,19 @@ export default {
 </script>
 <style lang="stylus" scoped>
 #sort
+  width 194px
   background-color black
   margin-left 10px
-  padding-left 20px
 </style>
+<style>
+.el-radio-group {
+  width: 130px;
+  margin-left: 20%;
+  margin-bottom: 5px;
+  margin-top: 5px;
+}
+.el-radio-button__inner {
+  padding: 8px 12px !important;
+}
+</style>
+

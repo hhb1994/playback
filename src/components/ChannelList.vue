@@ -108,7 +108,7 @@ export default {
           }
         })
         .catch(error => {
-          this.actionFailed("获取节目信息出错!");
+          this.actionFailed("获取频道信息出错!");
           console.log(error);
         });
       this.$store.commit({
