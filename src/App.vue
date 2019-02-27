@@ -200,7 +200,7 @@ export default {
     console.log("%cMZZZZZZZZZ+    .?ZZZZZZZZZZZZZZZZM", "color: blue");
     console.log("%cMZZZZZZZZ7  :$ZZZZZZZZZZZZZZZZZZOM", "color: blue");
     console.log("%cMOZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ8M", "color: blue");
-    console.log("%c由融媒体技术中心-系统研发部倾情开发~", "color:red");
+    console.log("%c由融媒体技术中心·系统研发部开发", "color:red");
   }
 };
 </script>

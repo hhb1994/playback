@@ -6,6 +6,7 @@
         ref="videoPlayer"
         :playsinline="true"
         :options="playerOptions"
+        @waiting="onPlayerWaiting($event)"
       ></video-player>
     </div>
   </div>
@@ -45,8 +46,15 @@ export default {
     };
   },
   computed: {
-    player() {
-      return this.$refs.videoPlayer.player;
+    player: {
+      get: function() {
+        return this.$refs.videoPlayer.player;
+      }
+    },
+    isVideo: {
+      get: function() {
+        return this.$store.state.isVideo;
+      }
     }
   },
   mounted() {
@@ -54,6 +62,18 @@ export default {
       type: "getPlayer",
       player: this.player.options_.sources[0]
     });
+  },
+  watch: {
+    // isVideo() {
+    //   if (!this.isVideo) {
+    //     this.playerOptions.poster = require("@/assets/2.gif");
+    //   }
+    // }
+  },
+  methods: {
+    onPlayerWaiting() {
+      this.playerOptions.poster = require("@/assets/loading.png");
+    }
   }
 };
 </script>
