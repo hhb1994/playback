@@ -87,19 +87,24 @@ export default {
 </script>
 <style lang="stylus" scoped>
 #sort
-  width 194px
+  width 164px
   background-color black
   margin-left 10px
 </style>
 <style>
 .el-radio-group {
-  width: 130px;
+  width: 140px;
   margin-left: 20%;
-  margin-bottom: 5px;
-  margin-top: 5px;
+  margin-bottom: 10px;
+  margin-top: 10px;
 }
 .el-radio-button__inner {
-  padding: 8px 12px !important;
+  padding: 7px 12px !important;
+}
+.el-radio-button:first-child .el-radio-button__inner {
+  border-radius: 15px 0 0 15px !important;
+}
+.el-radio-button:last-child .el-radio-button__inner {
+  border-radius: 0 15px 15px 0 !important;
 }
 </style>
-

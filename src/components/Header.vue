@@ -54,5 +54,10 @@ export default {
   #buttonGroup
     margin-left 35%
     padding-left 35%
-    margin-top 10px
+    margin-top 15px
+</style>
+<style>
+#header .el-button {
+  padding: 8px 18px !important;
+}
 </style>

@@ -59,4 +59,7 @@ export default {
 #travel {
   font-size: 20px;
 }
+#info .el-button {
+  padding: 8px 12px !important;
+}
 </style>

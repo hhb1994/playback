@@ -3,7 +3,6 @@
     <el-date-picker
       id="picker"
       v-model="date"
-      type="date"
       placeholder="选择日期"
       format="yyyy 年 MM 月 dd 日"
       value-format="yyyy-MM-dd"
@@ -57,17 +56,22 @@ export default {
 <style>
 #picker-container {
   width: 210px;
-  padding-top: 5px;
-  padding-bottom: 5px;
+  padding-top: 10px;
+  padding-bottom: 10px;
   padding-left: 15px;
   padding-right: 15px;
 }
 #picker {
   border-radius: 20px;
-  width: 180px;
+  width: 190px;
+  /* padding-bottom: 5px; */
 }
-#picker input {
-  padding: 3px;
+#picker-container .el-input__inner {
+  height: 33px;
+  /* padding-top: 5px; */
+}
+
+#picker-container .el-input__prefix {
+  height: 16px !important;
 }
 </style>
-

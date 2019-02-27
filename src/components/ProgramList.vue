@@ -184,7 +184,7 @@ export default {
   margin-left 5px
   cursor pointer
   color white
-  height 489px
+  height 490px
   overflow-y auto
   width 210px
   border-bottom 1px solid black

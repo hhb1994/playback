@@ -186,16 +186,17 @@ export default {
 #channelList
   color white
   margin-left 10px
-  height 500px
+  height 493px
   overflow-y auto
   background-color black
-  width 194px
+  width 164px
   cursor pointer
   border-right 1px solid rgb(31, 31, 31)
   li
+    font-size 14px
+    font-weight 500
     height 35px
     color white
-    font-weight 600
     margin-top 0.1rem
     vertical-align middle
     &:hover
