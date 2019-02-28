@@ -11,7 +11,6 @@ import "videojs-contrib-hls";
 import "./plugins/element.js";
 //axios 引入
 import axios from "axios";
-Vue.use(axios);
 Vue.prototype.$axios = axios;
 
 Vue.use(VueVideoPlayer);
