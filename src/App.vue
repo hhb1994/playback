@@ -10,13 +10,6 @@
     <div id="container">
       <div>
         <Player/>
-        <div v-if="isLoginIn">
-          <Info v-if="!isTimeTravel"/>
-          <div v-else>
-            <TimeTravel v-if="isVideo"/>
-          </div>
-        </div>
-        <div v-else style="color:white;padding-top:20px">登录以查看节目单及当前节目信息</div>
       </div>
       <div>
         <Sort/>
@@ -26,6 +19,17 @@
         <DatePicker/>
         <ProgramList/>
       </div>
+    </div>
+    <div class="flex-center">
+      <div id="information">
+      <div v-if="isLoginIn">
+        <Info v-if="!isTimeTravel"/>
+        <div v-else>
+          <TimeTravel v-if="isVideo"/>
+        </div>
+      </div>
+      <div v-else id="notLogin">登录以查看节目单及当前节目信息</div>
+    </div>
     </div>
     <Footer/>
     <el-dialog title="登录监听监看回放系统" :visible.sync="dialogVisible">
@@ -205,15 +209,31 @@ export default {
 };
 </script>
 <style lang="stylus" scoped>
+@media screen and (max-height: 600px)
+  #information
+    width 900px
+@media screen and (max-height: 750px) and (min-height: 600px)
+  #information
+    width 1150px
+@media screen and (min-height: 750px)
+  #information
+    width 1390px
 #app
   height 100%
+  color white
   #container
     margin-top 30px
     display flex
     justify-content center
+  #notLogin
+    margin-left 10%
+    padding-top 10px
   #dialogForm
     width 50%
     margin-left 25%
     #buttonGroup
       margin-left 40%
+.flex-center
+  display flex
+  justify-content center
 </style>

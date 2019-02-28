@@ -64,11 +64,9 @@ export default {
 #picker {
   border-radius: 20px;
   width: 190px;
-  /* padding-bottom: 5px; */
 }
 #picker-container .el-input__inner {
   height: 33px;
-  /* padding-top: 5px; */
 }
 
 #picker-container .el-input__prefix {

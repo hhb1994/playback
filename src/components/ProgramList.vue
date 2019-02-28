@@ -180,17 +180,25 @@ export default {
 };
 </script>
 <style lang="stylus" scoped>
+@media screen and (max-height:600px)
+  #programlist
+      height 215px
+@media screen and (max-height: 750px) and (min-height: 600px)
+  #programlist
+      height 350px
+@media screen and (min-height: 750px)
+  #programlist
+    height 485px
 #programlist
   margin-left 5px
   cursor pointer
   color white
-  height 490px
   overflow-y auto
   width 210px
   border-bottom 1px solid black
   border-right 1px solid black
   ul li
-    font-size 10px
+    font-size 11px
     height 30px
     border-bottom 1px solid black
     padding-top 10px

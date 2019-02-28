@@ -99,7 +99,7 @@ export default {
   margin-top: 10px;
 }
 .el-radio-button__inner {
-  padding: 7px 12px !important;
+  padding: 8px 12px !important;
 }
 .el-radio-button:first-child .el-radio-button__inner {
   border-radius: 15px 0 0 15px !important;

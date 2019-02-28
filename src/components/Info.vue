@@ -48,17 +48,43 @@ export default {
 };
 </script>
 <style lang="stylus" scoped>
+@media screen and (max-height: 600px)
+  #info
+    padding 5px
+    span
+      font-size 10px
+@media screen and (max-height: 750px) and (min-height: 600px)
+  #info
+    padding 7px
+    span
+      font-size 15px
+@media screen and (min-height: 750px)
+  #info
+    padding 10px
+    span
+      font-size 20px
 #info
   color white
-  padding 10px
   .el-button
-    margin-left 10px
     margin-right 10px
 </style>
 <style>
-#travel {
-  font-size: 20px;
+@media screen and (max-height: 600px) {
+  #travel {
+    font-size: 10px;
+  }
 }
+@media screen and (max-height: 750px) and (min-height: 600px) {
+  #travel {
+    font-size: 15px;
+  }
+}
+@media screen and (min-height: 750px) {
+  #travel {
+    font-size: 20px;
+  }
+}
+
 #info .el-button {
   padding: 8px 12px !important;
 }

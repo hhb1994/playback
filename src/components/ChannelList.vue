@@ -183,13 +183,21 @@ export default {
 };
 </script>
 <style lang="stylus" scoped>
+@media screen and (max-height: 600px)
+  #channelList
+    height 218px
+@media screen and (max-height: 750px) and (min-height: 600px)
+  #channelList
+    height 353px
+@media screen and (min-height: 750px)
+  #channelList
+    height 488px
 #channelList
+  width 164px
   color white
   margin-left 10px
-  height 493px
   overflow-y auto
   background-color black
-  width 164px
   cursor pointer
   border-right 1px solid rgb(31, 31, 31)
   li

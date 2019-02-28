@@ -78,7 +78,16 @@ export default {
 };
 </script>
 <style lang="stylus" scoped>
-#videoContainer
-  height 540px
-  width 960px
+@media screen and (max-height:600px)
+  #videoContainer
+    height 270px
+    width 480px
+@media screen and (max-height: 750px) and (min-height: 600px)
+  #videoContainer
+    height 405px
+    width 720px
+@media screen and (min-height: 750px)
+  #videoContainer
+    height 540px
+    width 960px
 </style>
