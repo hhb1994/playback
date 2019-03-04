@@ -88,6 +88,7 @@ export default {
 <style lang="stylus" scoped>
 #sort
   width 164px
+  border-top-left-radius 25px
   background-color black
   margin-left 10px
 </style>
@@ -98,13 +99,23 @@ export default {
   margin-bottom: 10px;
   margin-top: 10px;
 }
-.el-radio-button__inner {
+#sort .el-radio-button__inner {
   padding: 8px 12px !important;
 }
-.el-radio-button:first-child .el-radio-button__inner {
+#sort .el-radio-button.is-active .el-radio-button__inner {
+  background-color: #419eff;
+  border: 1px solid #419eff;
+  color: white;
+}
+#sort .el-radio-button .el-radio-button__inner {
+  background-color: rgb(31, 31, 31);
+  border: 1px solid rgb(31, 31, 31);
+  color: white;
+}
+#sort .el-radio-button:first-child .el-radio-button__inner {
   border-radius: 15px 0 0 15px !important;
 }
-.el-radio-button:last-child .el-radio-button__inner {
+#sort .el-radio-button:last-child .el-radio-button__inner {
   border-radius: 0 15px 15px 0 !important;
 }
 </style>

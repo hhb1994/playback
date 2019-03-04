@@ -1,10 +1,10 @@
 <template>
   <div id="info">
-    <el-button type="primary" round>节目信息</el-button>
-    <span>{{currentChannel}}</span>
-    <span>{{currentProgram.date}}&nbsp;</span>
-    <span>{{currentProgram.startTime}}</span>
-    <span>{{currentProgram.name}}</span>
+    <span class="info">节目信息</span>
+    <span class="text">{{currentChannel}}</span>
+    <span class="text">{{currentProgram.date}}&nbsp;</span>
+    <span class="text">{{currentProgram.startTime}}</span>
+    <span class="text">{{currentProgram.name}}</span>
     <el-button
       id="travel"
       class="showTimeTravel"
@@ -51,22 +51,35 @@ export default {
 @media screen and (max-height: 600px)
   #info
     padding 5px
-    span
+    .text
       font-size 10px
+    .info
+      font-size 12px
 @media screen and (max-height: 750px) and (min-height: 600px)
   #info
     padding 7px
-    span
+    .text
       font-size 15px
+    .info
+      font-size 14px
 @media screen and (min-height: 750px)
   #info
     padding 10px
-    span
+    .text
       font-size 20px
+    .info
+      font-size 16px
 #info
   color white
-  .el-button
+  .info
+    padding-top 8px
+    padding-bottom 8px
+    padding-left 14px
+    padding-right 14px
     margin-right 10px
+    margin-left 10px
+    background-color #333333
+    border-radius 20px
 </style>
 <style>
 @media screen and (max-height: 600px) {
@@ -83,9 +96,5 @@ export default {
   #travel {
     font-size: 20px;
   }
-}
-
-#info .el-button {
-  padding: 8px 12px !important;
 }
 </style>

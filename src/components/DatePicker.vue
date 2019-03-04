@@ -55,11 +55,13 @@ export default {
 </script>
 <style>
 #picker-container {
-  width: 210px;
+  width: 185px;
   padding-top: 10px;
   padding-bottom: 10px;
   padding-left: 15px;
   padding-right: 15px;
+  background-color: black;
+  border-top-right-radius: 25px;
 }
 #picker {
   border-radius: 20px;
@@ -67,6 +69,9 @@ export default {
 }
 #picker-container .el-input__inner {
   height: 33px;
+  background-color: rgb(31, 31, 31);
+  color: white;
+  border: none;
 }
 
 #picker-container .el-input__prefix {
