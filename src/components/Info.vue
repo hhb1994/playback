@@ -54,21 +54,21 @@ export default {
     .text
       font-size 10px
     .info
-      font-size 12px
+      font-size 10px
 @media screen and (max-height: 750px) and (min-height: 600px)
   #info
     padding 7px
     .text
       font-size 15px
     .info
-      font-size 14px
+      font-size 15px
 @media screen and (min-height: 750px)
   #info
     padding 10px
     .text
       font-size 20px
     .info
-      font-size 16px
+      font-size 20px
 #info
   color white
   .info
