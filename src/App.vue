@@ -22,14 +22,14 @@
     </div>
     <div class="flex-center">
       <div id="information">
-      <div v-if="isLoginIn">
-        <Info v-if="!isTimeTravel"/>
-        <div v-else>
-          <TimeTravel v-if="isVideo"/>
+        <div v-if="isLoginIn">
+          <Info v-if="!isTimeTravel"/>
+          <div v-else>
+            <TimeTravel v-if="isVideo"/>
+          </div>
         </div>
+        <div v-else id="notLogin">登录以查看节目单及当前节目信息</div>
       </div>
-      <div v-else id="notLogin">登录以查看节目单及当前节目信息</div>
-    </div>
     </div>
     <Footer/>
     <el-dialog title="登录监听监看回放系统" :visible.sync="dialogVisible">
@@ -153,11 +153,22 @@ export default {
               let expireMinutes = 120;
               date.setTime(date.getTime() + expireMinutes * 60000);
               document.cookie = `token = ${
-                response.data.data
+                response.data.data.tokenId
+              }; expires = ${date.toGMTString()}`;
+              document.cookie = `name = ${
+                response.data.data.name
               }; expires = ${date.toGMTString()}`;
               this.$store.commit({
                 type: "changeLoginInState",
                 isLoginIn: true
+              });
+              this.$store.commit({
+                type: "getLoginName",
+                loginName: response.data.data.name
+              });
+              this.$store.commit({
+                type: "getAdminState",
+                isAdmin: response.data.data.isAdmin
               });
               this.hideDialog();
               this.actionSuccess("登录成功!");

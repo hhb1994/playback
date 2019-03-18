@@ -13,6 +13,8 @@ export default new Vuex.Store({
     isDialogVisible: false,
 
     isLoginIn: false,
+    loginName: null,
+    isAdmin: false,
 
     date: null,
     currentChannel: [],
@@ -41,6 +43,14 @@ export default new Vuex.Store({
     // 改变登录状态
     changeLoginInState(state, payload) {
       state.isLoginIn = payload.isLoginIn;
+    },
+    //获取登录名
+    getLoginName(state, payload) {
+      state.loginName = payload.loginName;
+    },
+    //检查是否为管理员
+    getAdminState(state, payload) {
+      state.isAdmin = payload.isAdmin;
     },
     // 获取播放器
     getPlayer(state, payload) {

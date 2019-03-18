@@ -108,7 +108,6 @@ export default {
           }
         })
         .catch(error => {
-          this.actionFailed("获取频道信息出错!");
           console.log(error);
         });
       this.$store.commit({
