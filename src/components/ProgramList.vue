@@ -5,12 +5,8 @@
         v-for="(item,index) in programList"
         :key="index"
         @click="playFile(item,$event),bindClass(index)"
-        :class="{'programActive':programIndex === index}"
-      >
-        <div
-          :class="(((item.date+item.startTime) >= currentTime))?'programListNotActive':'programListActive'"
-        >{{item.startTime}} {{item.name}}</div>
-      </li>
+        :class="[{'programActive':programIndex === index},programClass(item)]"
+      >{{item.startTime}} {{item.name}}</li>
     </ul>
   </div>
 </template>
@@ -48,6 +44,13 @@ export default {
     }
   },
   methods: {
+    programClass(item) {
+      if (item.date + item.endTime <= this.currentTime) {
+        return "programListActive";
+      } else {
+        return "programListNotActive";
+      }
+    },
     getPrograms(channelCode, shortName, Date) {
       this.$axios
         .get(
@@ -96,8 +99,9 @@ export default {
                 });
                 this.$store.commit({
                   type: "changeProgramIndex",
-                  programIndex: i - 1
+                  programIndex: i - 2
                 });
+                // 滚动
 
                 document.getElementById("programlist").scrollTo({
                   behavior: "smooth",
@@ -113,7 +117,10 @@ export default {
         });
     },
     playFile(item, event) {
-      if (event.target.className.split(" ")[0] == "programListNotActive") {
+      if (
+        event.target.className.split(" ")[1] == "programListNotActive" ||
+        event.target.className.split(" ")[0] == "programListNotActive"
+      ) {
         this.actionFailed("此节目还没有收录");
       } else {
         this.$store.commit({
@@ -180,12 +187,12 @@ export default {
 };
 </script>
 <style lang="stylus" scoped>
-@media screen and (max-height:600px)
+@media screen and (max-height: 600px)
   #programlist
-      height 215px
+    height 215px
 @media screen and (max-height: 750px) and (min-height: 600px)
   #programlist
-      height 350px
+    height 350px
 @media screen and (min-height: 750px)
   #programlist
     height 485px
@@ -206,12 +213,10 @@ export default {
     transition 300ms
     &:hover
       height 35px
-      div
-        white-space normal
-    div
-      white-space nowrap
-      overflow hidden
-      text-overflow ellipsis
+      white-space normal
+    white-space nowrap
+    overflow hidden
+    text-overflow ellipsis
 .programListNotActive
   color gray
   cursor not-allowed
@@ -222,6 +227,8 @@ export default {
   background-color rgb(31, 31, 31)
   border-left 3px solid #008eff
   transition 300ms
+.programListInRecord
+  display none
 #programlist::-webkit-scrollbar
   width 2px
 #programlist::-webkit-scrollbar-track

@@ -64,21 +64,22 @@ export default {
     });
   },
   watch: {
-    // isVideo() {
-    //   if (!this.isVideo) {
-    //     this.playerOptions.poster = require("@/assets/2.gif");
-    //   }
-    // }
+    isVideo() {
+      if (!this.isVideo) {
+        this.player.isAudio_ = true;
+        this.playerOptions.poster = require("@/assets/2.gif");
+      }
+    }
   },
   methods: {
     onPlayerWaiting() {
-      this.playerOptions.poster = require("@/assets/loading.png");
+      // this.playerOptions.poster = require("@/assets/loading.png");
     }
   }
 };
 </script>
 <style lang="stylus" scoped>
-@media screen and (max-height:600px)
+@media screen and (max-height: 600px)
   #videoContainer
     height 270px
     width 480px
