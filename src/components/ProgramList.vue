@@ -15,10 +15,18 @@ export default {
   name: "ProgramList",
   data() {
     return {
-      token: document.cookie.split(";")[0].split("=")[1],
+      token: document.cookie
+        .split(";")
+        [
+          document.cookie
+            .split(";")
+            .findIndex(item => item.trim().substring(0, 8) == "vodToken")
+        ].split("=")[1],
       programList: [],
       currentDate: this.$moment().format("YYYY-MM-DD"),
-      currentTime: this.$moment().format("YYYY-MM-DDHH:mm:ss")
+      currentTime: this.$moment().format("YYYY-MM-DDHH:mm:ss"),
+      newestProgram: null,
+      programNumber: null
     };
   },
   computed: {
@@ -32,6 +40,11 @@ export default {
         return this.$store.state.currentChannel;
       }
     },
+    currentProgram: {
+      get: function() {
+        return this.$store.state.currentProgram;
+      }
+    },
     date: {
       get: function() {
         return this.$store.state.date;
@@ -41,14 +54,29 @@ export default {
       get: function() {
         return this.$store.state.isVideo;
       }
+    },
+    channelIndex: {
+      get: function() {
+        return this.$store.state.channelIndex;
+      }
+    },
+    videoStream: {
+      get: function() {
+        return this.$store.state.videoStream;
+      }
+    },
+    audioStream: {
+      get: function() {
+        return this.$store.state.audioStream;
+      }
     }
   },
   methods: {
     programClass(item) {
-      if (item.date + item.endTime <= this.currentTime) {
-        return "programListActive";
-      } else {
+      if (item.date + item.startTime > this.currentTime) {
         return "programListNotActive";
+      } else {
+        return "programListActive";
       }
     },
     getPrograms(channelCode, shortName, Date) {
@@ -86,36 +114,61 @@ export default {
               }
             }
             this.programList = response.data.data;
-
             //获取当前频道/滚动
-            for (let i = 0; i < response.data.data.length; i++) {
-              if (
-                response.data.data[i].startTime >
-                this.$moment().format("HH:mm:ss")
-              ) {
-                this.$store.commit({
-                  type: "getCurrentProgram",
-                  currentProgram: response.data.data[i - 1]
-                });
-                this.$store.commit({
-                  type: "changeProgramIndex",
-                  programIndex: i - 2
-                });
-                // 滚动
-
-                document.getElementById("programlist").scrollTo({
-                  behavior: "smooth",
-                  top: 40 * (i - 3)
-                });
-                break;
-              }
-            }
+            this.scrollList();
+            this.scrollListInTime();
           }
         })
         .catch(error => {
           console.log(error);
         });
     },
+    scrollList() {
+      for (let i = 0; i < this.programList.length; i++) {
+        if (this.programList[i].startTime > this.$moment().format("HH:mm:ss")) {
+          this.programNumber = i;
+          this.newestProgram = this.programList[i - 1].id;
+          this.$store.commit({
+            type: "getCurrentProgram",
+            currentProgram: this.programList[i - 1]
+          });
+          this.$store.commit({
+            type: "getTimeTravelProgram",
+            timeTravelProgram: this.programList[i - 1]
+          });
+          this.$store.commit({
+            type: "changeProgramIndex",
+            programIndex: i - 1
+          });
+          // 滚动
+          document.getElementById("programlist").scrollTo({
+            behavior: "smooth",
+            top: 40 * (i - 3)
+          });
+          break;
+        }
+      }
+    },
+    scrollListInTime() {
+      setInterval(() => this.scrollList2(), 10000);
+    },
+    scrollList2() {
+      if (
+        this.programList[this.programNumber - 1].startTime >
+        this.$moment().format("HH:mm:ss")
+      ) {
+        this.programNumber += 1;
+        this.$store.commit({
+          type: "getCurrentProgram",
+          currentProgram: this.programList[this.programNumber - 1]
+        });
+        this.$store.commit({
+          type: "getTimeTravelProgram",
+          timeTravelProgram: this.programList[this.programNumber - 1]
+        });
+      }
+    },
+
     playFile(item, event) {
       if (
         event.target.className.split(" ")[1] == "programListNotActive" ||
@@ -123,28 +176,56 @@ export default {
       ) {
         this.actionFailed("此节目还没有收录");
       } else {
-        this.$store.commit({
-          type: "changeTimeTravelState",
-          isTimeTravel: false
-        });
-        this.actionSuccess(`开始播放文件: ${item.name}`);
-        if (this.isVideo) {
+        if (item.id !== this.newestProgram) {
+          //统计点击量
+          this.$axios
+            .post(
+              `http://10.20.15.165:8080/jtjk/click`,
+              { channelCode: this.currentChannel.channelId, program: item.id },
+              {
+                headers: { Authorization: this.token }
+              }
+            )
+            .catch(err => console.log(err));
+          // 修改时移状态
           this.$store.commit({
-            type: "changeStream",
-            streamSrc: item.resourceUrl,
-            streamType: "video/mp4"
+            type: "changeTimeTravelState",
+            isTimeTravel: false
+          });
+          this.actionSuccess(`开始播放文件: ${item.name}`);
+          if (this.isVideo) {
+            this.$store.commit({
+              type: "changeStream",
+              streamSrc: item.resourceUrl,
+              streamType: "video/mp4"
+            });
+          } else {
+            this.$store.commit({
+              type: "changeStream",
+              streamSrc: item.resourceUrl,
+              streamType: "audio/mp3"
+            });
+          }
+          this.$store.commit({
+            type: "getCurrentProgram",
+            currentProgram: item
           });
         } else {
-          this.$store.commit({
-            type: "changeStream",
-            streamSrc: item.resourceUrl,
-            streamType: "audio/mp3"
-          });
+          // 点击最后一个节目返回直播
+          if (this.isVideo) {
+            this.$store.commit({
+              type: "changeStream",
+              streamSrc: this.videoStream[this.channelIndex],
+              streamType: "application/x-mpegURL"
+            });
+          } else {
+            this.$store.commit({
+              type: "changeStream",
+              streamSrc: this.audioStream[this.channelIndex],
+              streamType: "application/x-mpegURL"
+            });
+          }
         }
-        this.$store.commit({
-          type: "getCurrentProgram",
-          currentProgram: item
-        });
       }
     },
     bindClass(index) {

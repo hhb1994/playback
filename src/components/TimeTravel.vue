@@ -1,14 +1,15 @@
 <template>
   <div id="timetravel">
     <div>
-      <span>{{currentChannel.channelName}}(拖动下方进度条来实现当天任意时间段时移)</span>
+      <span>{{currentChannel.channelName}}(拖动下方进度条来时移当前正在播放的节目)</span>
       <el-button id="back" @click="hideTimeTravel()" type="text">
         <i class="el-icon-arrow-left"></i>返回直播
       </el-button>
     </div>
     <el-slider v-model="value" :max="max" :show-tooltip="false" :disabled="disabled"></el-slider>
     <div id="scale">
-      <div v-for="(item ,index) in scale" :key="index">{{item}}</div>
+      <div>{{timeTravelProgram.startTime}}</div>
+      <div>{{timeTravelProgram.endTime}}</div>
     </div>
   </div>
 </template>
@@ -19,41 +20,47 @@ export default {
   data() {
     return {
       value: 0,
-      valueLimit: ~~(
-        (Date.parse(new Date()) -
-          Date.parse(this.$moment().format("YYYY/MM/DD"))) /
-        10000
-      ),
-      max: 8640,
       disabled: false,
       year: this.$moment().format("YYYY"),
       month: this.$moment().format("MM"),
-      day: this.$moment().format("DD"),
-      scale: [
-        "00:00",
-        "01:30",
-        "03:00",
-        "04:30",
-        "06:00",
-        "07:30",
-        "09:00",
-        "10:30",
-        "12:00",
-        "13:30",
-        "15:00",
-        "16:30",
-        "18:00",
-        "19:30",
-        "21:00",
-        "22:30",
-        "24:00"
-      ]
+      day: this.$moment().format("DD")
     };
   },
   computed: {
+    valueLimit: function() {
+      return ~~(
+        (Date.parse(new Date()) -
+          Date.parse(
+            this.$moment().format("YYYY/MM/DD") +
+              " " +
+              this.timeTravelProgram.startTime
+          )) /
+        10000
+      );
+    },
+    max: function() {
+      return ~~(
+        (Date.parse(
+          this.$moment().format("YYYY/MM/DD") +
+            " " +
+            this.timeTravelProgram.endTime
+        ) -
+          Date.parse(
+            this.$moment().format("YYYY/MM/DD") +
+              " " +
+              this.timeTravelProgram.startTime
+          )) /
+        10000
+      );
+    },
     currentTime() {
       let currentTime =
-        Date.parse(this.$moment().format("YYYY/MM/DD")) + this.value * 10000;
+        Date.parse(
+          this.$moment().format("YYYY/MM/DD") +
+            " " +
+            this.timeTravelProgram.startTime
+        ) +
+        this.value * 10000;
       let hour = this.addZero(new Date(currentTime).getHours());
       let minute = this.addZero(new Date(currentTime).getMinutes());
       let second = this.addZero(new Date(currentTime).getSeconds());
@@ -64,6 +71,11 @@ export default {
     currentChannel: {
       get: function() {
         return this.$store.state.currentChannel;
+      }
+    },
+    timeTravelProgram: {
+      get: function() {
+        return this.$store.state.timeTravelProgram;
       }
     },
     channelIndex: {
@@ -197,7 +209,6 @@ export default {
   display flex
   justify-content space-between
   width 960px
-#back{
+#back
   font-size 20px
-}
 </style>

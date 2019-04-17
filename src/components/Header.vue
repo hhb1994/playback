@@ -25,11 +25,33 @@ export default {
   name: "Header",
   data() {
     return {
-      token: document.cookie.split(";")[0].split("=")[1],
-      name: document.cookie.split(";")[1].split("=")[1]
+      name: document.cookie
+        .split(";")
+        [
+          document.cookie
+            .split(";")
+            .findIndex(item => item.trim().substring(0, 4) == "name")
+        ].split("=")[1]
     };
   },
   computed: {
+    token: function() {
+      if (
+        document.cookie
+          .split(";")
+          .findIndex(item => item.trim().substring(0, 8) == "vodToken") != -1
+      ) {
+        return document.cookie
+          .split(";")
+          [
+            document.cookie
+              .split(";")
+              .findIndex(item => item.trim().substring(0, 8) == "vodToken")
+          ].split("=")[1];
+      } else {
+        return undefined;
+      }
+    },
     isLoginIn: {
       get: function() {
         return this.$store.state.isLoginIn;
@@ -51,7 +73,7 @@ export default {
     logOut() {
       let date = new Date();
       date.setTime(date.getTime() - 10000);
-      document.cookie = "token=''; expires=" + date.toGMTString();
+      document.cookie = "vodToken=''; expires=" + date.toGMTString();
       document.cookie = "name=''; expires=" + date.toGMTString();
       location.reload();
     }

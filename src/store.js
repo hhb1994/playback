@@ -7,9 +7,10 @@ export default new Vuex.Store({
   state: {
     isVideo: true,
     player: null,
-    initStream: "http://10.20.50.127:8081/zjws/index.m3u8",
+    initStream: "http://10.20.50.127:8081/zjwssd/index.m3u8",
     initStream2: "http://10.20.50.127:8081/fm88/index.m3u8",
     videoStream: [],
+    audioStream: [],
     isDialogVisible: false,
 
     isLoginIn: false,
@@ -19,6 +20,7 @@ export default new Vuex.Store({
     date: null,
     currentChannel: [],
     currentProgram: [],
+    timeTravelProgram: [],
 
     channelIndex: 0,
     programIndex: 0,
@@ -39,6 +41,10 @@ export default new Vuex.Store({
     // 获取所有视频直播流
     getAllVideoStream(state, payload) {
       state.videoStream = payload.videoStream;
+    },
+    // 获取所有音频直播流
+    getAllAudioStream(state, payload) {
+      state.audioStream = payload.audioStream;
     },
     // 改变登录状态
     changeLoginInState(state, payload) {
@@ -68,6 +74,10 @@ export default new Vuex.Store({
     //获取当前正在播放的节目
     getCurrentProgram(state, payload) {
       state.currentProgram = payload.currentProgram;
+    },
+    //获取当前需要时移的节目
+    getTimeTravelProgram(state, payload) {
+      state.timeTravelProgram = payload.timeTravelProgram;
     },
     // 获取当前日期
     changeDate(state, payload) {

@@ -67,7 +67,7 @@ export default {
     isVideo() {
       if (!this.isVideo) {
         this.player.isAudio_ = true;
-        this.playerOptions.poster = require("@/assets/2.gif");
+        this.playerOptions.poster = require("@/assets/loading.png");
       }
     }
   },

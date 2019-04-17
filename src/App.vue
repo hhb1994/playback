@@ -152,7 +152,7 @@ export default {
               let date = new Date();
               let expireMinutes = 120;
               date.setTime(date.getTime() + expireMinutes * 60000);
-              document.cookie = `token = ${
+              document.cookie = `vodToken = ${
                 response.data.data.tokenId
               }; expires = ${date.toGMTString()}`;
               document.cookie = `name = ${
@@ -177,8 +177,13 @@ export default {
           .catch(error => console.log(error));
       }
     },
+
     checkCookie() {
-      if (document.cookie.split(";")[0].split("=")[1]) {
+      if (
+        document.cookie
+          .split(";")
+          .findIndex(item => item.trim().substring(0, 8) == "vodToken") !== -1
+      ) {
         this.$store.commit({
           type: "changeLoginInState",
           isLoginIn: true

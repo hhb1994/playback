@@ -5,7 +5,7 @@
         <li
           v-for="(item,index) in videoChannelList"
           :key="index"
-          @click="changeStream(index),getCurrentChannel(item),bindClass(index),backToLive()"
+          @click="changeStream(index),getCurrentChannel(item),bindClass(index),backToLive(),registerChannel(item.channelId)"
           :class="{'channelActive':channelIndex === index}"
         >
           <img :src="item.videoImgSrc">
@@ -18,7 +18,7 @@
         <li
           v-for="(item,index) in audioChannelList"
           :key="index"
-          @click="changeStream(index),getCurrentChannel(item),bindClass(index)"
+          @click="changeStream(index),getCurrentChannel(item),bindClass(index),registerChannel(item.channelId)"
           :class="{'channelActive':channelIndex === index}"
         >
           <img :src="item.audioImgSrc">
@@ -40,6 +40,23 @@ export default {
     };
   },
   computed: {
+    token: function() {
+      if (
+        document.cookie
+          .split(";")
+          .findIndex(item => item.trim().substring(0, 8) == "vodToken") != -1
+      ) {
+        return document.cookie
+          .split(";")
+          [
+            document.cookie
+              .split(";")
+              .findIndex(item => item.trim().substring(0, 8) == "vodToken")
+          ].split("=")[1];
+      } else {
+        return undefined;
+      }
+    },
     isVideo: {
       get: function() {
         return this.$store.state.isVideo;
@@ -63,22 +80,19 @@ export default {
         .get("http://10.20.15.165:8080/jtjk/channels", { timeout: 5000 })
         .then(response => {
           if (response.data.code != 200) {
-            this.actionFailed("无法获取频道信息!");
+            console.log(response.data);
           } else {
-            response.data.data.reverse();
-            for (let i = 0; i < response.data.data.length; i++) {
-              if (response.data.data[i].group.name == "arcvideo") {
-                let videoChannelName = response.data.data[i].name.split("-")[0];
-                let videoChannelShortName = response.data.data[i].name.split(
-                  "-"
-                )[1];
+            let streamList = response.data.data;
+            streamList.reverse();
+            for (let i = 0; i < streamList.length; i++) {
+              if (streamList[i].group.name == "arcvideo") {
+                let videoChannelName = streamList[i].name.split("-")[0];
+                let videoChannelShortName = streamList[i].name.split("-")[1];
                 this.videoChannelList.push({
                   channelName: videoChannelName,
-                  channelId: response.data.data[i].id,
+                  channelId: streamList[i].id,
                   channelShortName: videoChannelShortName,
-                  videoImgSrc: require(`@/assets/icons/${
-                    response.data.data[i].id
-                  }.png`)
+                  videoImgSrc: require(`@/assets/icons/${streamList[i].id}.png`)
                 });
                 this.videoStream.push(
                   "http://10.20.50.127:8081/" +
@@ -86,17 +100,13 @@ export default {
                     "/index.m3u8"
                 );
               } else {
-                let audioChannelName = response.data.data[i].name.split("-")[0];
-                let audioChannelShortName = response.data.data[i].name.split(
-                  "-"
-                )[1];
+                let audioChannelName = streamList[i].name.split("-")[0];
+                let audioChannelShortName = streamList[i].name.split("-")[1];
                 this.audioChannelList.push({
                   channelName: audioChannelName,
-                  channelId: response.data.data[i].id,
+                  channelId: streamList[i].id,
                   channelShortName: audioChannelShortName,
-                  audioImgSrc: require(`@/assets/icons/${
-                    response.data.data[i].id
-                  }.png`)
+                  audioImgSrc: require(`@/assets/icons/${streamList[i].id}.png`)
                 });
                 this.audioStream.push(
                   "http://10.20.50.127:8081/" +
@@ -121,6 +131,10 @@ export default {
       this.$store.commit({
         type: "getAllVideoStream",
         videoStream: this.videoStream
+      });
+      this.$store.commit({
+        type: "getAllAudioStream",
+        audioStream: this.audioStream
       });
     },
     // 切换直播源
@@ -153,6 +167,18 @@ export default {
           currentChannel: currentChannel
         });
       }
+    },
+    //统计频道点击信息
+    registerChannel(id) {
+      this.$axios
+        .post(
+          `http://10.20.15.165:8080/jtjk/click`,
+          { channelCode: id },
+          {
+            headers: { Authorization: this.token }
+          }
+        )
+        .catch(err => console.log(err));
     },
     backToLive() {
       this.$store.commit({
