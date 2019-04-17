@@ -15,20 +15,17 @@
         <Sort/>
         <ChannelList/>
       </div>
-      <div v-if="isLoginIn">
+      <div>
         <DatePicker/>
         <ProgramList/>
       </div>
     </div>
     <div class="flex-center">
       <div id="information">
-        <div v-if="isLoginIn">
-          <Info v-if="!isTimeTravel"/>
-          <div v-else>
-            <TimeTravel v-if="isVideo"/>
-          </div>
+        <Info v-if="!isTimeTravel"/>
+        <div v-else>
+          <TimeTravel v-if="isVideo"/>
         </div>
-        <div v-else id="notLogin">登录以查看节目单及当前节目信息</div>
       </div>
     </div>
     <Footer/>

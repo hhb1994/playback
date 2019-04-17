@@ -53,16 +53,14 @@ export default {
           streamType: "application/x-mpegURL"
         });
 
-        if (this.isLoginIn) {
-          this.$store.commit({
-            type: "getCurrentChannel",
-            currentChannel: {
-              channelName: "浙江卫视高清",
-              channelId: 1,
-              channelShortName: "zjws"
-            }
-          });
-        }
+        this.$store.commit({
+          type: "getCurrentChannel",
+          currentChannel: {
+            channelName: "浙江卫视高清",
+            channelId: 1,
+            channelShortName: "zjws"
+          }
+        });
       } else {
         this.$store.commit({
           type: "changeStream",
@@ -70,16 +68,14 @@ export default {
           streamType: "application/x-mpegURL"
         });
 
-        if (this.isLoginIn) {
-          this.$store.commit({
-            type: "getCurrentChannel",
-            currentChannel: {
-              channelName: "浙江之声",
-              channelId: 12,
-              channelShortName: "fm88"
-            }
-          });
-        }
+        this.$store.commit({
+          type: "getCurrentChannel",
+          currentChannel: {
+            channelName: "浙江之声",
+            channelId: 12,
+            channelShortName: "fm88"
+          }
+        });
       }
     }
   }

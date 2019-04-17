@@ -25,13 +25,13 @@ export default {
   name: "Header",
   data() {
     return {
-      name: document.cookie
-        .split(";")
-        [
-          document.cookie
-            .split(";")
-            .findIndex(item => item.trim().substring(0, 4) == "name")
-        ].split("=")[1]
+      // name: document.cookie
+      //   .split(";")
+      //   [
+      //     document.cookie
+      //       .split(";")
+      //       .findIndex(item => item.trim().substring(0, 4) == "name")
+      //   ].split("=")[1]
     };
   },
   computed: {
@@ -47,6 +47,23 @@ export default {
             document.cookie
               .split(";")
               .findIndex(item => item.trim().substring(0, 8) == "vodToken")
+          ].split("=")[1];
+      } else {
+        return undefined;
+      }
+    },
+    name: function() {
+      if (
+        document.cookie
+          .split(";")
+          .findIndex(item => item.trim().substring(0, 4) == "name") != -1
+      ) {
+        return document.cookie
+          .split(";")
+          [
+            document.cookie
+              .split(";")
+              .findIndex(item => item.trim().substring(0, 4) == "name")
           ].split("=")[1];
       } else {
         return undefined;

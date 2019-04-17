@@ -15,13 +15,6 @@ export default {
   name: "ProgramList",
   data() {
     return {
-      token: document.cookie
-        .split(";")
-        [
-          document.cookie
-            .split(";")
-            .findIndex(item => item.trim().substring(0, 8) == "vodToken")
-        ].split("=")[1],
       programList: [],
       currentDate: this.$moment().format("YYYY-MM-DD"),
       currentTime: this.$moment().format("YYYY-MM-DDHH:mm:ss"),
@@ -30,6 +23,23 @@ export default {
     };
   },
   computed: {
+    token: function() {
+      if (
+        document.cookie
+          .split(";")
+          .findIndex(item => item.trim().substring(0, 8) == "vodToken") != -1
+      ) {
+        return document.cookie
+          .split(";")
+          [
+            document.cookie
+              .split(";")
+              .findIndex(item => item.trim().substring(0, 8) == "vodToken")
+          ].split("=")[1];
+      } else {
+        return undefined;
+      }
+    },
     programIndex: {
       get: function() {
         return this.$store.state.programIndex;
@@ -81,11 +91,7 @@ export default {
     },
     getPrograms(channelCode, shortName, Date) {
       this.$axios
-        .get(
-          `http://10.20.15.165:8080/jtjk/programs/${channelCode}/${Date}`,
-
-          { headers: { Authorization: this.token } }
-        )
+        .get(`http://10.20.15.165:8080/jtjk/programs/${channelCode}/${Date}`)
         .then(response => {
           if (response.data.code != 200) {
             this.actionFailed("找不到当前频道的节目单");
@@ -178,21 +184,25 @@ export default {
       } else {
         if (item.id !== this.newestProgram) {
           //统计点击量
-          this.$axios
-            .post(
-              `http://10.20.15.165:8080/jtjk/click`,
-              { channelCode: this.currentChannel.channelId, program: item.id },
-              {
-                headers: { Authorization: this.token }
-              }
-            )
-            .catch(err => console.log(err));
+          if (this.token) {
+            this.$axios
+              .post(
+                `http://10.20.15.165:8080/jtjk/click`,
+                {
+                  channelCode: this.currentChannel.channelId,
+                  program: item.id
+                },
+                {
+                  headers: { Authorization: this.token }
+                }
+              )
+              .catch(err => console.log(err));
+          }
           // 修改时移状态
           this.$store.commit({
             type: "changeTimeTravelState",
             isTimeTravel: false
           });
-          this.actionSuccess(`开始播放文件: ${item.name}`);
           if (this.isVideo) {
             this.$store.commit({
               type: "changeStream",

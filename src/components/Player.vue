@@ -1,13 +1,16 @@
 <template>
   <div>
     <div id="videoContainer">
-      <video-player
-        class="video-player vjs-custom-skin"
-        ref="videoPlayer"
-        :playsinline="true"
-        :options="playerOptions"
-        @waiting="onPlayerWaiting($event)"
-      ></video-player>
+      <div>
+        <video-player
+          class="video-player vjs-custom-skin"
+          ref="videoPlayer"
+          :playsinline="true"
+          :options="playerOptions"
+          @waiting="onPlayerWaiting($event)"
+        ></video-player>
+      </div>
+      <div id="audioCover" v-if="!isVideo"></div>
     </div>
   </div>
 </template>
@@ -79,16 +82,34 @@ export default {
 };
 </script>
 <style lang="stylus" scoped>
+#videoContainer
+  position relative
+#audioCover
+  position absolute
+  top 0
+  left 0
+  background-image url('../assets/2.gif')
+  background-repeat no-repeat
+  background-size cover
 @media screen and (max-height: 600px)
   #videoContainer
+    height 270px
+    width 480px
+  #audioCover
     height 270px
     width 480px
 @media screen and (max-height: 750px) and (min-height: 600px)
   #videoContainer
     height 405px
     width 720px
+  #audioCover
+    height 405px
+    width 720px
 @media screen and (min-height: 750px)
   #videoContainer
+    height 540px
+    width 960px
+  #audioCover
     height 540px
     width 960px
 </style>

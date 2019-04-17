@@ -161,24 +161,24 @@ export default {
     },
     // 提交当前正在播放的频道信息
     getCurrentChannel(currentChannel) {
-      if (this.isLoginIn) {
-        this.$store.commit({
-          type: "getCurrentChannel",
-          currentChannel: currentChannel
-        });
-      }
+      this.$store.commit({
+        type: "getCurrentChannel",
+        currentChannel: currentChannel
+      });
     },
     //统计频道点击信息
     registerChannel(id) {
-      this.$axios
-        .post(
-          `http://10.20.15.165:8080/jtjk/click`,
-          { channelCode: id },
-          {
-            headers: { Authorization: this.token }
-          }
-        )
-        .catch(err => console.log(err));
+      if (this.token) {
+        this.$axios
+          .post(
+            `http://10.20.15.165:8080/jtjk/click`,
+            { channelCode: id },
+            {
+              headers: { Authorization: this.token }
+            }
+          )
+          .catch(err => console.log(err));
+      }
     },
     backToLive() {
       this.$store.commit({
