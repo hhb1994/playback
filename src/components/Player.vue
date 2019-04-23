@@ -7,7 +7,7 @@
           ref="videoPlayer"
           :playsinline="true"
           :options="playerOptions"
-          @waiting="onPlayerWaiting($event)"
+          oncontextmenu="return false"
         ></video-player>
       </div>
       <div id="audioCover" v-if="!isVideo"></div>
@@ -66,19 +66,8 @@ export default {
       player: this.player.options_.sources[0]
     });
   },
-  watch: {
-    isVideo() {
-      if (!this.isVideo) {
-        this.player.isAudio_ = true;
-        this.playerOptions.poster = require("@/assets/loading.png");
-      }
-    }
-  },
-  methods: {
-    onPlayerWaiting() {
-      // this.playerOptions.poster = require("@/assets/loading.png");
-    }
-  }
+  watch: {},
+  methods: {}
 };
 </script>
 <style lang="stylus" scoped>
@@ -96,20 +85,20 @@ export default {
     height 270px
     width 480px
   #audioCover
-    height 270px
+    height 230px
     width 480px
 @media screen and (max-height: 750px) and (min-height: 600px)
   #videoContainer
     height 405px
     width 720px
   #audioCover
-    height 405px
+    height 365px
     width 720px
 @media screen and (min-height: 750px)
   #videoContainer
     height 540px
     width 960px
   #audioCover
-    height 540px
+    height 500px
     width 960px
 </style>

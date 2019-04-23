@@ -6,21 +6,28 @@
     <span class="text">{{currentProgram.startTime}}</span>
     <span class="text">{{currentProgram.name}}</span>
     <el-button
+      style="margin-left:10px"
       id="travel"
       class="showTimeTravel"
       type="text"
       @click="showTimeTravel()"
       v-show="isVideo"
     >
-      直播时移
+      时移
       <i class="el-icon-arrow-right"></i>
     </el-button>
+    <a style="margin-left:10px" v-if="isLoginIn && downloadable && isFile" :href="fileUrl" download>下载
+      <i class="el-icon-download"></i>
+    </a>
   </div>
 </template>
 <script>
 export default {
   name: "Info",
   computed: {
+    fileUrl: function() {
+      return this.currentProgram.resourceUrl;
+    },
     currentChannel: {
       get: function() {
         return this.$store.state.currentChannel.channelName;
@@ -35,6 +42,28 @@ export default {
       get: function() {
         return this.$store.state.isVideo;
       }
+    },
+    isLoginIn: {
+      get: function() {
+        return this.$store.state.isLoginIn;
+      }
+    },
+    downloadable: {
+      get: function() {
+        return this.$store.state.downloadable;
+      }
+    },
+    player: {
+      get: function() {
+        return this.$store.state.player;
+      }
+    },
+    isFile: function() {
+      if (this.player.type == "video/mp4" || this.player.type == "audio/mp3") {
+        return true;
+      } else {
+        return false;
+      }
     }
   },
   methods: {
@@ -48,6 +77,9 @@ export default {
 };
 </script>
 <style lang="stylus" scoped>
+a
+  text-decoration none
+  color #419eff
 @media screen and (max-height: 600px)
   #info
     padding 5px

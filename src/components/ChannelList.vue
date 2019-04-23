@@ -5,7 +5,7 @@
         <li
           v-for="(item,index) in videoChannelList"
           :key="index"
-          @click="changeStream(index),getCurrentChannel(item),bindClass(index),backToLive(),registerChannel(item.channelId)"
+          @click="changeStream(index),getCurrentChannel(item),bindClass(index),backToLive(),registerChannel(item)"
           :class="{'channelActive':channelIndex === index}"
         >
           <img :src="item.videoImgSrc">
@@ -18,7 +18,7 @@
         <li
           v-for="(item,index) in audioChannelList"
           :key="index"
-          @click="changeStream(index),getCurrentChannel(item),bindClass(index),registerChannel(item.channelId)"
+          @click="changeStream(index),getCurrentChannel(item),bindClass(index),registerChannel(item)"
           :class="{'channelActive':channelIndex === index}"
         >
           <img :src="item.audioImgSrc">
@@ -172,11 +172,29 @@ export default {
         this.$axios
           .post(
             `http://10.20.15.165:8080/jtjk/click`,
-            { channelCode: id },
+            { channelCode: id.channelId },
             {
               headers: { Authorization: this.token }
             }
           )
+          .catch(err => console.log(err));
+        this.$axios
+          .get(`http://10.20.15.165:8080/jtjk/token/${id.channelShortName}`, {
+            headers: { Authorization: this.token }
+          })
+          .then(res => {
+            if (res.data.code == 200) {
+              this.$store.commit({
+                type: "changeDownloadable",
+                downloadable: true
+              });
+            } else {
+              this.$store.commit({
+                type: "changeDownloadable",
+                downloadable: false
+              });
+            }
+          })
           .catch(err => console.log(err));
       }
     },

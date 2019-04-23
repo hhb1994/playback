@@ -168,6 +168,25 @@ export default {
                 isAdmin: response.data.data.isAdmin
               });
               this.hideDialog();
+              this.$axios
+                .get("http://10.20.15.165:8080/jtjk/token/zjws", {
+                  headers: { Authorization: response.data.data.tokenId }
+                })
+                .then(res => {
+                  if (res.data.code == 200) {
+                    this.$store.commit({
+                      type: "changeDownloadable",
+                      downloadable: true
+                    });
+                  } else {
+                    this.$store.commit({
+                      type: "changeDownloadable",
+                      downloadable: false
+                    });
+                  }
+                })
+                .catch(err => console.log(err));
+
               this.actionSuccess("登录成功!");
             }
           })

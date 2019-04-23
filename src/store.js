@@ -14,6 +14,7 @@ export default new Vuex.Store({
     isDialogVisible: false,
 
     isLoginIn: false,
+    downloadable: false,
     loginName: null,
     isAdmin: false,
 
@@ -49,6 +50,10 @@ export default new Vuex.Store({
     // 改变登录状态
     changeLoginInState(state, payload) {
       state.isLoginIn = payload.isLoginIn;
+    },
+    //控制下载是否显示
+    changeDownloadable(state, payload) {
+      state.downloadable = payload.downloadable;
     },
     //获取登录名
     getLoginName(state, payload) {
