@@ -190,7 +190,7 @@ export default {
                 `http://10.20.15.165:8080/jtjk/click`,
                 {
                   channelCode: this.currentChannel.channelId,
-                  program: item.id
+                  program: item.name
                 },
                 {
                   headers: { Authorization: this.token }
