@@ -16,7 +16,7 @@
       时移
       <i class="el-icon-arrow-right"></i>
     </el-button>
-    <a style="margin-left:10px" v-if="isLoginIn && downloadable && isFile" :href="fileUrl" download>下载
+    <a class="download" v-if="isLoginIn && downloadable && isFile" :href="fileUrl" download>下载
       <i class="el-icon-download"></i>
     </a>
   </div>
@@ -80,12 +80,15 @@ export default {
 a
   text-decoration none
   color #419eff
+  font-weight 600
 @media screen and (max-height: 600px)
   #info
     padding 5px
     .text
       font-size 10px
     .info
+      font-size 10px
+    .download
       font-size 10px
 @media screen and (max-height: 750px) and (min-height: 600px)
   #info
@@ -94,12 +97,16 @@ a
       font-size 15px
     .info
       font-size 15px
+    .download
+      font-size 15px
 @media screen and (min-height: 750px)
   #info
     padding 10px
     .text
       font-size 20px
     .info
+      font-size 20px
+    .download
       font-size 20px
 #info
   color white
@@ -112,6 +119,8 @@ a
     margin-left 10px
     background-color #333333
     border-radius 20px
+  .download
+    margin-left 10px
 </style>
 <style>
 @media screen and (max-height: 600px) {

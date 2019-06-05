@@ -72,7 +72,7 @@ export default {
           type: "getCurrentChannel",
           currentChannel: {
             channelName: "浙江之声",
-            channelId: 12,
+            channelId: 27,
             channelShortName: "fm88"
           }
         });

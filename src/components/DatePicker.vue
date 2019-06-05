@@ -49,7 +49,7 @@ export default {
     }
   },
   mounted() {
-    this.$store.commit({ type: "changeDate", date: this.currentDate });
+    // this.$store.commit({ type: "changeDate", date: this.currentDate });
   }
 };
 </script>

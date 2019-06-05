@@ -4,8 +4,8 @@
       <li
         v-for="(item,index) in programList"
         :key="index"
-        @click="playFile(item,$event),bindClass(index)"
-        :class="[{'programActive':programIndex === index},programClass(item)]"
+        @click="playFile(item,index),bindClass(index)"
+        :class="[{'programActive':programIndex == index},programClass(item)]"
       >{{item.startTime}} {{item.name}}</li>
     </ul>
   </div>
@@ -19,7 +19,8 @@ export default {
       currentDate: this.$moment().format("YYYY-MM-DD"),
       currentTime: this.$moment().format("YYYY-MM-DDHH:mm:ss"),
       newestProgram: null,
-      programNumber: null
+      programNumber: null,
+      timeId: null
     };
   },
   computed: {
@@ -97,7 +98,7 @@ export default {
             this.actionFailed("找不到当前频道的节目单");
             this.programList = [];
           } else {
-            if (response.data.data[0].channelCode >= 12) {
+            if (this.currentChannel.channelId >= 22) {
               let year = Date.split("-")[0];
               let month = Date.split("-")[1];
               let day = Date.split("-")[2];
@@ -111,6 +112,17 @@ export default {
                 ].resourceUrl = `http://10.20.50.124/${shortName}/${year}/${month}/${day}/${
                   response.data.data[i].name
                 }-${hours}${minutes}00.${type}`;
+              }
+            } else if (
+              this.currentChannel.channelId < 22 &&
+              this.currentChannel.channelId > 11
+            ) {
+              for (let i = 0; i < response.data.data.length; i++) {
+                let url = response.data.data[i].resourceUrl.replace(
+                  /sd[/]/,
+                  "/"
+                );
+                response.data.data[i].resourceUrl = `http://${url}`;
               }
             } else {
               for (let i = 0; i < response.data.data.length; i++) {
@@ -149,21 +161,32 @@ export default {
           // 滚动
           document.getElementById("programlist").scrollTo({
             behavior: "smooth",
+            top: 0
+          });
+          document.getElementById("programlist").scrollTo({
+            behavior: "smooth",
             top: 40 * (i - 3)
           });
           break;
         }
       }
+      if (!this.programList[this.programNumber - 1]) {
+        document.getElementById("programlist").scrollTo({
+          behavior: "smooth",
+          top: document.getElementById("programlist").scrollHeight
+        });
+      }
     },
     scrollListInTime() {
-      setInterval(() => this.scrollList2(), 10000);
+      clearTimeout(this.timeId);
+      this.timeId = setInterval(() => this.scrollList2(), 10000);
     },
     scrollList2() {
       if (
-        this.programList[this.programNumber - 1].startTime >
+        this.programList[this.programNumber - 1].endTime <
         this.$moment().format("HH:mm:ss")
       ) {
-        this.programNumber += 1;
+        this.programNumber++;
         this.$store.commit({
           type: "getCurrentProgram",
           currentProgram: this.programList[this.programNumber - 1]
@@ -175,12 +198,11 @@ export default {
       }
     },
 
-    playFile(item, event) {
-      if (
-        event.target.className.split(" ")[1] == "programListNotActive" ||
-        event.target.className.split(" ")[0] == "programListNotActive"
-      ) {
+    playFile(item, index) {
+      if (index > this.programNumber - 1 && this.currentDate == item.date) {
         this.actionFailed("此节目还没有收录");
+        console.log(index);
+        console.log(this.programNumber);
       } else {
         if (item.id !== this.newestProgram) {
           //统计点击量
@@ -260,12 +282,15 @@ export default {
       });
     }
   },
-  mounted() {
-    this.getPrograms(1, "zjws", this.currentDate);
-  },
   watch: {
     currentChannel(data) {
-      this.getPrograms(data.channelId, data.channelShortName, this.currentDate);
+      this.date == null
+        ? this.getPrograms(
+            data.channelId,
+            data.channelShortName,
+            this.currentDate
+          )
+        : this.getPrograms(data.channelId, data.channelShortName, this.date);
     },
     date(data) {
       this.getPrograms(
@@ -274,7 +299,8 @@ export default {
         data
       );
     }
-  }
+  },
+  beforeCreate() {}
 };
 </script>
 <style lang="stylus" scoped>

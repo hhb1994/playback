@@ -152,6 +152,10 @@ export default {
           streamType: "application/x-mpegURL"
         });
       }
+      this.$store.commit({
+        type: "changeDate",
+        date: this.$moment().format("YYYY-MM-DD")
+      });
     },
     bindClass(index) {
       this.$store.commit({
