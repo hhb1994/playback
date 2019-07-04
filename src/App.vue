@@ -134,7 +134,7 @@ export default {
         let password = this.userpwd;
         this.$axios
           .post(
-            "http://10.20.15.165:8080/jtjk/token",
+            "http://10.20.50.124:8080/jtjk/token",
             { username: username, password: password },
             { timeout: 3000 }
           )
@@ -169,7 +169,7 @@ export default {
               });
               this.hideDialog();
               this.$axios
-                .get("http://10.20.15.165:8080/jtjk/token/zjws", {
+                .get("http://10.20.50.124:8080/jtjk/token/zjws", {
                   headers: { Authorization: response.data.data.tokenId }
                 })
                 .then(res => {

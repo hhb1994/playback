@@ -5,7 +5,7 @@
         v-for="(item,index) in programList"
         :key="index"
         @click="playFile(item,index),bindClass(index)"
-        :class="[{'programActive':programIndex == index},programClass(item)]"
+        :class="[{'programActive':programIndex == index},programClass(index)]"
       >{{item.startTime}} {{item.name}}</li>
     </ul>
   </div>
@@ -80,19 +80,20 @@ export default {
       get: function() {
         return this.$store.state.audioStream;
       }
+    },
+    programClass() {
+      return function(index) {
+        return index > this.programNumber - 1 &&
+          (this.date == this.currentDate || this.date == null)
+          ? "programListNotActive"
+          : "programListActive";
+      };
     }
   },
   methods: {
-    programClass(item) {
-      if (item.date + item.startTime > this.currentTime) {
-        return "programListNotActive";
-      } else {
-        return "programListActive";
-      }
-    },
     getPrograms(channelCode, shortName, Date) {
       this.$axios
-        .get(`http://10.20.15.165:8080/jtjk/programs/${channelCode}/${Date}`)
+        .get(`http://10.20.50.124:8080/jtjk/programs/${channelCode}/${Date}`)
         .then(response => {
           if (response.data.code != 200) {
             this.actionFailed("找不到当前频道的节目单");
@@ -133,8 +134,10 @@ export default {
             }
             this.programList = response.data.data;
             //获取当前频道/滚动
-            this.scrollList();
-            this.scrollListInTime();
+            this.$nextTick(() => {
+              this.scrollList();
+              this.scrollListInTime();
+            });
           }
         })
         .catch(error => {
@@ -142,40 +145,42 @@ export default {
         });
     },
     scrollList() {
+      this.programNumber = null;
       for (let i = 0; i < this.programList.length; i++) {
         if (this.programList[i].startTime > this.$moment().format("HH:mm:ss")) {
           this.programNumber = i;
-          this.newestProgram = this.programList[i - 1].id;
-          this.$store.commit({
-            type: "getCurrentProgram",
-            currentProgram: this.programList[i - 1]
-          });
-          this.$store.commit({
-            type: "getTimeTravelProgram",
-            timeTravelProgram: this.programList[i - 1]
-          });
-          this.$store.commit({
-            type: "changeProgramIndex",
-            programIndex: i - 1
-          });
           // 滚动
           document.getElementById("programlist").scrollTo({
             behavior: "smooth",
-            top: 0
-          });
-          document.getElementById("programlist").scrollTo({
-            behavior: "smooth",
-            top: 40 * (i - 3)
+            top: 40 * (this.programNumber - 3)
           });
           break;
         }
       }
-      if (!this.programList[this.programNumber - 1]) {
+      if (this.programNumber == null) {
+        this.programNumber = this.programList.length; // 滚动
+        document.getElementById("programlist").scrollTo({
+          behavior: "smooth",
+          top: 40 * (this.programNumber - 3)
+        });
         document.getElementById("programlist").scrollTo({
           behavior: "smooth",
           top: document.getElementById("programlist").scrollHeight
         });
       }
+      this.newestProgram = this.programList[this.programNumber - 1].id;
+      this.$store.commit({
+        type: "getCurrentProgram",
+        currentProgram: this.programList[this.programNumber - 1]
+      });
+      this.$store.commit({
+        type: "getTimeTravelProgram",
+        timeTravelProgram: this.programList[this.programNumber - 1]
+      });
+      this.$store.commit({
+        type: "changeProgramIndex",
+        programIndex: this.programNumber - 1
+      });
     },
     scrollListInTime() {
       clearTimeout(this.timeId);
@@ -187,6 +192,7 @@ export default {
         this.$moment().format("HH:mm:ss")
       ) {
         this.programNumber++;
+        this.newestProgram = this.programList[this.programNumber - 1].id;
         this.$store.commit({
           type: "getCurrentProgram",
           currentProgram: this.programList[this.programNumber - 1]
@@ -201,15 +207,13 @@ export default {
     playFile(item, index) {
       if (index > this.programNumber - 1 && this.currentDate == item.date) {
         this.actionFailed("此节目还没有收录");
-        console.log(index);
-        console.log(this.programNumber);
       } else {
         if (item.id !== this.newestProgram) {
           //统计点击量
           if (this.token) {
             this.$axios
               .post(
-                `http://10.20.15.165:8080/jtjk/click`,
+                `http://10.20.50.124:8080/jtjk/click`,
                 {
                   channelCode: this.currentChannel.channelId,
                   program: item.name
@@ -244,6 +248,10 @@ export default {
           });
         } else {
           // 点击最后一个节目返回直播
+          this.$store.commit({
+            type: "getCurrentProgram",
+            currentProgram: this.programList[this.programNumber - 1]
+          });
           if (this.isVideo) {
             this.$store.commit({
               type: "changeStream",
@@ -293,11 +301,17 @@ export default {
         : this.getPrograms(data.channelId, data.channelShortName, this.date);
     },
     date(data) {
-      this.getPrograms(
-        this.$store.state.currentChannel.channelId,
-        this.$store.state.currentChannel.channelShortName,
-        data
-      );
+      data == null
+        ? this.getPrograms(
+            this.$store.state.currentChannel.channelId,
+            this.$store.state.currentChannel.channelShortName,
+            this.currentDate
+          )
+        : this.getPrograms(
+            this.$store.state.currentChannel.channelId,
+            this.$store.state.currentChannel.channelShortName,
+            data
+          );
     }
   },
   beforeCreate() {}

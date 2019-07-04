@@ -6,6 +6,7 @@
       placeholder="选择日期"
       format="yyyy 年 MM 月 dd 日"
       value-format="yyyy-MM-dd"
+      :clearable="false"
     ></el-date-picker>
   </div>
 </template>

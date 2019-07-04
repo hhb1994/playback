@@ -77,7 +77,7 @@ export default {
     // 获取直播频道列表,并根据广播/电视分类
     getChannelList() {
       this.$axios
-        .get("http://10.20.15.165:8080/jtjk/channels", { timeout: 5000 })
+        .get("http://10.20.50.124:8080/jtjk/channels", { timeout: 5000 })
         .then(response => {
           if (response.data.code != 200) {
             console.log(response.data);
@@ -125,7 +125,7 @@ export default {
         currentChannel: {
           channelName: "浙江卫视高清",
           channelId: 1,
-          channelShortName: "zjws"
+          channelShortName: "zjwssd"
         }
       });
       this.$store.commit({
@@ -152,10 +152,10 @@ export default {
           streamType: "application/x-mpegURL"
         });
       }
-      this.$store.commit({
-        type: "changeDate",
-        date: this.$moment().format("YYYY-MM-DD")
-      });
+      // this.$store.commit({
+      //   type: "changeDate",
+      //   date: null
+      // });
     },
     bindClass(index) {
       this.$store.commit({
@@ -175,7 +175,7 @@ export default {
       if (this.token) {
         this.$axios
           .post(
-            `http://10.20.15.165:8080/jtjk/click`,
+            `http://10.20.50.124:8080/jtjk/click`,
             { channelCode: id.channelId },
             {
               headers: { Authorization: this.token }
@@ -183,7 +183,7 @@ export default {
           )
           .catch(err => console.log(err));
         this.$axios
-          .get(`http://10.20.15.165:8080/jtjk/token/${id.channelShortName}`, {
+          .get(`http://10.20.50.124:8080/jtjk/token/${id.channelShortName}`, {
             headers: { Authorization: this.token }
           })
           .then(res => {

@@ -127,7 +127,7 @@ export default {
     destoryStream() {
       this.$axios
         .get(
-          `http://10.20.50.127:8080/zbsy/CloseThread?m3u8Name=${
+          `http://10.20.50.124:8088/zbsy/CloseThread?m3u8Name=${
             this.streamToDestory.streamUri
           }&program=${this.streamToDestory.shortName}`,
           { timeout: 20000 }
@@ -143,7 +143,7 @@ export default {
 
       this.$axios
         .get(
-          `http://10.20.50.127:8080/zbsy/GetM3U8?timestamp=${
+          `http://10.20.50.124:8088/zbsy/GetM3U8?timestamp=${
             this.currentTime
           }&program=${this.currentChannel.channelShortName}`,
           { timeout: 20000 }
