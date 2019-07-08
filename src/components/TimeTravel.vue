@@ -102,10 +102,10 @@ export default {
         type: "changeStream",
         streamSrc: this.$store.state.videoStream[this.channelIndex]
       });
-      this.$store.commit({
-        type: "getCurrentProgram",
-        currentProgram: ""
-      });
+      // this.$store.commit({
+      //   type: "getCurrentProgram",
+      //   currentProgram: ""
+      // });
       this.destoryStream();
     },
     beginTimeTravel: debounce(function() {

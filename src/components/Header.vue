@@ -8,14 +8,19 @@
         <div v-show="!isLoginIn">
           <el-button @click="showDialog()" round>登录</el-button>
         </div>
-        <div v-if="isLoginIn">
-          <p>当前登录用户:{{this.existName}}</p>
-        </div>
-        <div v-if="isLoginIn">
-          <span>
-            <el-button @click="logOut()" round>注销</el-button>
-          </span>
-        </div>
+        <transition
+          enter-active-class="animated fadeInLeft faster"
+          leave-active-class="animated fadeOutLeft faster"
+        >
+          <div v-if="isLoginIn" class="flex">
+            <div>
+              <p>当前登录用户:{{this.existName}}</p>
+            </div>
+            <div>
+              <el-button @click="logOut()" round>注销</el-button>
+            </div>
+          </div>
+        </transition>
       </div>
     </div>
   </div>

@@ -13,6 +13,10 @@ import "./plugins/element.js";
 import axios from "axios";
 Vue.prototype.$axios = axios;
 
+import animated from "animate.css";
+
+Vue.use(animated);
+
 Vue.use(VueVideoPlayer);
 
 Vue.prototype.$moment = moment;

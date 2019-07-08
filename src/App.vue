@@ -6,29 +6,35 @@
     element-loading-spinner="el-icon-loading"
     element-loading-background="rgba(0, 0, 0, 0.8)"
   >
-    <Header/>
+    <Header />
     <div id="container">
       <div>
-        <Player/>
+        <Player />
       </div>
       <div>
-        <Sort/>
-        <ChannelList/>
+        <Sort />
+        <ChannelList />
       </div>
       <div>
-        <DatePicker/>
-        <ProgramList/>
+        <DatePicker />
+        <ProgramList />
       </div>
     </div>
     <div class="flex-center">
       <div id="information">
-        <Info v-if="!isTimeTravel"/>
-        <div v-else>
-          <TimeTravel v-if="isVideo"/>
-        </div>
+        <transition
+          enter-active-class="animated fadeInUp faster"
+          leave-active-class="animated fadeOutUp faster"
+          mode="out-in"
+        >
+          <Info v-if="!isTimeTravel" />
+          <div v-if="isTimeTravel">
+            <TimeTravel v-if="isVideo" />
+          </div>
+        </transition>
       </div>
     </div>
-    <Footer/>
+    <Footer />
     <el-dialog title="登录监听监看回放系统" :visible.sync="dialogVisible">
       <div id="dialogForm">
         <el-form>

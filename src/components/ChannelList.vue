@@ -1,31 +1,38 @@
 <template>
   <div id="channelList">
-    <div v-if="isVideo">
-      <ul>
-        <li
-          v-for="(item,index) in videoChannelList"
-          :key="index"
-          @click="changeStream(index),getCurrentChannel(item),bindClass(index),backToLive(),registerChannel(item)"
-          :class="{'channelActive':channelIndex === index}"
-        >
-          <img :src="item.videoImgSrc">
-          <span>{{item.channelName}}</span>
-        </li>
-      </ul>
-    </div>
-    <div v-else>
-      <ul>
-        <li
-          v-for="(item,index) in audioChannelList"
-          :key="index"
-          @click="changeStream(index),getCurrentChannel(item),bindClass(index),registerChannel(item)"
-          :class="{'channelActive':channelIndex === index}"
-        >
-          <img :src="item.audioImgSrc">
-          <span>{{item.channelName}}</span>
-        </li>
-      </ul>
-    </div>
+    <transition
+      :enter-active-class="enterActiveClass"
+      :leave-active-class="leaveActiveClass"
+      mode="out-in"
+      type="animation"
+    >
+      <div v-if="isVideo" key="videoList">
+        <ul>
+          <li
+            v-for="(item,index) in videoChannelList"
+            :key="index"
+            @click="changeStream(index),getCurrentChannel(item),bindClass(index),backToLive(),registerChannel(item)"
+            :class="{'channelActive':channelIndex === index}"
+          >
+            <img :src="item.videoImgSrc" />
+            <span>{{item.channelName}}</span>
+          </li>
+        </ul>
+      </div>
+      <div v-if="!isVideo" key="audioList">
+        <ul>
+          <li
+            v-for="(item,index) in audioChannelList"
+            :key="index"
+            @click="changeStream(index),getCurrentChannel(item),bindClass(index),registerChannel(item)"
+            :class="{'channelActive':channelIndex === index}"
+          >
+            <img :src="item.audioImgSrc" />
+            <span>{{item.channelName}}</span>
+          </li>
+        </ul>
+      </div>
+    </transition>
   </div>
 </template>
 <script>
@@ -71,6 +78,16 @@ export default {
       get: function() {
         return this.$store.state.isLoginIn;
       }
+    },
+    enterActiveClass() {
+      return this.isVideo
+        ? "animated slideInLeft faster"
+        : "animated slideInRight faster";
+    },
+    leaveActiveClass() {
+      return this.isVideo
+        ? "animated slideOutRight faster"
+        : "animated slideOutLeft faster";
     }
   },
   methods: {
@@ -248,6 +265,7 @@ export default {
   cursor pointer
   border-right 1px solid rgb(31, 31, 31)
   li
+    list-style none
     font-size 14px
     font-weight 500
     height 35px

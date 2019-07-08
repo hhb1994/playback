@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@videojs/http-streaming": "^1.8.0",
+    "animate.css": "^3.7.2",
     "axios": "^0.18.0",
     "element-ui": "^2.4.5",
     "lodash": "^4.17.11",
