@@ -33,5 +33,3 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 
 scp -r 22 dist/* root@10.20.50.124:/usr/local/nginx-1.6.0/web/html/live
 
-
-
