@@ -102,10 +102,6 @@ export default {
         type: "changeStream",
         streamSrc: this.$store.state.videoStream[this.channelIndex]
       });
-      // this.$store.commit({
-      //   type: "getCurrentProgram",
-      //   currentProgram: ""
-      // });
       this.destoryStream();
     },
     beginTimeTravel: debounce(function() {
@@ -125,12 +121,17 @@ export default {
       }
     }, 780),
     destoryStream() {
-      this.$axios
-        .get(
-          `http://10.20.50.124:8088/zbsy/CloseThread?m3u8Name=${this.streamToDestory.streamUri}&program=${this.streamToDestory.shortName}`,
-          { timeout: 20000 }
-        )
-        .catch(error => console.log(error));
+      if (
+        this.streamToDestory.streamUri &&
+        this.streamToDestory.streamToDestory.shortName
+      ) {
+        this.$axios
+          .get(
+            `http://10.20.50.124:8088/zbsy/CloseThread?m3u8Name=${this.streamToDestory.streamUri}&program=${this.streamToDestory.shortName}`,
+            { timeout: 20000 }
+          )
+          .catch(error => console.log(error));
+      }
     },
     timeTralvel() {
       this.$store.commit({
@@ -184,7 +185,9 @@ export default {
   },
   watch: {
     currentTime() {
-      this.beginTimeTravel();
+      if (this.value != this.valueLimit) {
+        this.beginTimeTravel();
+      }
     }
   },
   mounted() {
