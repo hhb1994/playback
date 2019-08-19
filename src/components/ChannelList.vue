@@ -48,21 +48,7 @@ export default {
   },
   computed: {
     token: function() {
-      if (
-        document.cookie
-          .split(";")
-          .findIndex(item => item.trim().substring(0, 8) == "vodToken") != -1
-      ) {
-        return document.cookie
-          .split(";")
-          [
-            document.cookie
-              .split(";")
-              .findIndex(item => item.trim().substring(0, 8) == "vodToken")
-          ].split("=")[1];
-      } else {
-        return undefined;
-      }
+      return sessionStorage.getItem("token");
     },
     isVideo: {
       get: function() {

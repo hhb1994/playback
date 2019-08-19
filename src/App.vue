@@ -116,8 +116,7 @@ export default {
   data() {
     return {
       username: "",
-      userpwd: "",
-      token: document.cookie.split(";")[0].split("=")[1]
+      userpwd: ""
     };
   },
   methods: {
@@ -152,15 +151,8 @@ export default {
             } else {
               this.username = "";
               this.userpwd = "";
-              let date = new Date();
-              let expireMinutes = 120;
-              date.setTime(date.getTime() + expireMinutes * 60000);
-              document.cookie = `vodToken = ${
-                response.data.data.tokenId
-              }; expires = ${date.toGMTString()}`;
-              document.cookie = `name = ${
-                response.data.data.name
-              }; expires = ${date.toGMTString()}`;
+              sessionStorage.setItem("token", response.data.data.tokenId);
+              sessionStorage.setItem("name", response.data.data.name);
               this.$store.commit({
                 type: "changeLoginInState",
                 isLoginIn: true
@@ -201,11 +193,7 @@ export default {
     },
 
     checkCookie() {
-      if (
-        document.cookie
-          .split(";")
-          .findIndex(item => item.trim().substring(0, 8) == "vodToken") !== -1
-      ) {
+      if (sessionStorage.getItem("token")) {
         this.$store.commit({
           type: "changeLoginInState",
           isLoginIn: true

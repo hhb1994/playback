@@ -28,51 +28,9 @@
 <script>
 export default {
   name: "Header",
-  data() {
-    return {
-      // name: document.cookie
-      //   .split(";")
-      //   [
-      //     document.cookie
-      //       .split(";")
-      //       .findIndex(item => item.trim().substring(0, 4) == "name")
-      //   ].split("=")[1]
-    };
-  },
   computed: {
-    token: function() {
-      if (
-        document.cookie
-          .split(";")
-          .findIndex(item => item.trim().substring(0, 8) == "vodToken") != -1
-      ) {
-        return document.cookie
-          .split(";")
-          [
-            document.cookie
-              .split(";")
-              .findIndex(item => item.trim().substring(0, 8) == "vodToken")
-          ].split("=")[1];
-      } else {
-        return undefined;
-      }
-    },
     name: function() {
-      if (
-        document.cookie
-          .split(";")
-          .findIndex(item => item.trim().substring(0, 4) == "name") != -1
-      ) {
-        return document.cookie
-          .split(";")
-          [
-            document.cookie
-              .split(";")
-              .findIndex(item => item.trim().substring(0, 4) == "name")
-          ].split("=")[1];
-      } else {
-        return undefined;
-      }
+      return sessionStorage.getItem("name");
     },
     isLoginIn: {
       get: function() {
@@ -94,9 +52,7 @@ export default {
     },
     logOut() {
       let date = new Date();
-      date.setTime(date.getTime() - 10000);
-      document.cookie = "vodToken=''; expires=" + date.toGMTString();
-      document.cookie = "name=''; expires=" + date.toGMTString();
+      sessionStorage.clear();
       location.reload();
     }
   }
