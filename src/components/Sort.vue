@@ -56,7 +56,7 @@ export default {
         this.$store.commit({
           type: "getCurrentChannel",
           currentChannel: {
-            channelName: "浙江卫视高清",
+            channelName: "浙江卫视标清",
             channelId: 1,
             channelShortName: "zjws"
           }
