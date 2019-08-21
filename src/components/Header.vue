@@ -51,7 +51,6 @@ export default {
       this.$store.commit({ type: "showDialog" });
     },
     logOut() {
-      let date = new Date();
       sessionStorage.clear();
       location.reload();
     }

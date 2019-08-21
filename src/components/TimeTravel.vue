@@ -123,7 +123,7 @@ export default {
     destoryStream() {
       if (
         this.streamToDestory.streamUri &&
-        this.streamToDestory.streamToDestory.shortName
+        this.streamToDestory.shortName
       ) {
         this.$axios
           .get(
