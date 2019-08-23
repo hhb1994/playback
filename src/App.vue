@@ -69,6 +69,7 @@ import DatePicker from "./components/DatePicker.vue";
 import Sort from "./components/Sort.vue";
 import Info from "./components/Info.vue";
 import TimeTravel from "./components/TimeTravel.vue";
+import utils from "./assets/scripts/utils";
 
 export default {
   name: "app",
@@ -153,13 +154,10 @@ export default {
               this.userpwd = "";
               sessionStorage.setItem("token", response.data.data.tokenId);
               sessionStorage.setItem("name", response.data.data.name);
+              sessionStorage.setItem("department", response.data.data.department);
               this.$store.commit({
                 type: "changeLoginInState",
                 isLoginIn: true
-              });
-              this.$store.commit({
-                type: "getLoginName",
-                loginName: response.data.data.name
               });
               this.$store.commit({
                 type: "getAdminState",
@@ -200,6 +198,34 @@ export default {
         });
       }
     },
+    getToken() {
+      if (utils.getUrlKey("token")) {
+        sessionStorage.setItem("sobeyToken", utils.getUrlKey("token"));
+        sessionStorage.setItem("siteCode", utils.getUrlKey("siteCode"));
+        this.getUserInfo(utils.getUrlKey("token"));
+      }
+    },
+    getUserInfo(token) {
+      if (token) {
+        this.$axios
+          .post(`http://10.20.50.124:8080/jtjk/sso`, {
+            token: token
+          })
+          .then(res => {
+            if (res.data.code == 200) {
+              sessionStorage.setItem("token", res.data.data.tokenId);
+              sessionStorage.setItem("name", res.data.data.name);
+              sessionStorage.setItem("department", res.data.data.department);
+              this.actionSuccess("登录成功!");
+              this.$store.commit({
+                type: "changeLoginInState",
+                isLoginIn: true
+              });
+            }
+          })
+          .catch(err => console.log(err));
+      }
+    },
     actionSuccess(success) {
       this.$notify({
         title: "SUCCESS",
@@ -214,23 +240,29 @@ export default {
         message: fail,
         position: "top-left"
       });
+    },
+    consoleLogo() {
+      console.log("%cMOZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ8M", "color: blue");
+      console.log("%cMZZZZZZZZZZZZO7+==?ZZZZZZZZZZZZZZM", "color: blue");
+      console.log("%cMZZZZZZZZZ=..        ?ZZZZZZZZZZZM", "color: blue");
+      console.log("%cMZZZZZZ?.            :ZZZZZZZ?:.:M", "color: blue");
+      console.log("%cMZZZZZ.     .:+.    .ZZZ=.......,M", "color: blue");
+      console.log("%cMZZZZ.   .7ZZZZ.   ,$..         ,M", "color: blue");
+      console.log("%cMZZZZ..$ZZZZZ,    .   .. ~?7$ZZZZM", "color: blue");
+      console.log("%cMZZZZZZZZZZ$.      ,+ZZZZZZZZZZZZM", "color: blue");
+      console.log("%cMZZZZZZZZZ+    .?ZZZZZZZZZZZZZZZZM", "color: blue");
+      console.log("%cMZZZZZZZZ7  :$ZZZZZZZZZZZZZZZZZZOM", "color: blue");
+      console.log("%cMOZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ8M", "color: blue");
+      console.log("%c由融媒体技术中心·系统研发部开发", "color:red");
     }
   },
   mounted() {
     this.checkCookie();
-
-    console.log("%cMOZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ8M", "color: blue");
-    console.log("%cMZZZZZZZZZZZZO7+==?ZZZZZZZZZZZZZZM", "color: blue");
-    console.log("%cMZZZZZZZZZ=..        ?ZZZZZZZZZZZM", "color: blue");
-    console.log("%cMZZZZZZ?.            :ZZZZZZZ?:.:M", "color: blue");
-    console.log("%cMZZZZZ.     .:+.    .ZZZ=.......,M", "color: blue");
-    console.log("%cMZZZZ.   .7ZZZZ.   ,$..         ,M", "color: blue");
-    console.log("%cMZZZZ..$ZZZZZ,    .   .. ~?7$ZZZZM", "color: blue");
-    console.log("%cMZZZZZZZZZZ$.      ,+ZZZZZZZZZZZZM", "color: blue");
-    console.log("%cMZZZZZZZZZ+    .?ZZZZZZZZZZZZZZZZM", "color: blue");
-    console.log("%cMZZZZZZZZ7  :$ZZZZZZZZZZZZZZZZZZOM", "color: blue");
-    console.log("%cMOZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ8M", "color: blue");
-    console.log("%c由融媒体技术中心·系统研发部开发", "color:red");
+    this.getToken();
+    this.consoleLogo();
+  },
+  beforeDestroy() {
+    sessionStorage.clear();
   }
 };
 </script>

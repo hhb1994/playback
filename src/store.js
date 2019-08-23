@@ -15,7 +15,6 @@ export default new Vuex.Store({
 
     isLoginIn: false,
     downloadable: false,
-    loginName: null,
     isAdmin: false,
 
     date: null,
@@ -54,10 +53,6 @@ export default new Vuex.Store({
     //控制下载是否显示
     changeDownloadable(state, payload) {
       state.downloadable = payload.downloadable;
-    },
-    //获取登录名
-    getLoginName(state, payload) {
-      state.loginName = payload.loginName;
     },
     //检查是否为管理员
     getAdminState(state, payload) {

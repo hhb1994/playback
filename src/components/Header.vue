@@ -14,7 +14,7 @@
         >
           <div v-if="isLoginIn" class="flex">
             <div>
-              <p>当前登录用户:{{this.existName}}</p>
+              <p>{{this.name}} - {{this.department}}</p>
             </div>
             <div>
               <el-button @click="logOut()" round>注销</el-button>
@@ -32,18 +32,13 @@ export default {
     name: function() {
       return sessionStorage.getItem("name");
     },
+    department: function() {
+      return sessionStorage.getItem("department");
+    },
     isLoginIn: {
       get: function() {
         return this.$store.state.isLoginIn;
       }
-    },
-    loginName: {
-      get: function() {
-        return this.$store.state.loginName;
-      }
-    },
-    existName() {
-      return this.loginName == null ? this.name : this.loginName;
     }
   },
   methods: {
@@ -51,8 +46,8 @@ export default {
       this.$store.commit({ type: "showDialog" });
     },
     logOut() {
+      location.href = location.href.split("?")[0];
       sessionStorage.clear();
-      location.reload();
     }
   }
 };
