@@ -154,7 +154,10 @@ export default {
               this.userpwd = "";
               sessionStorage.setItem("token", response.data.data.tokenId);
               sessionStorage.setItem("name", response.data.data.name);
-              sessionStorage.setItem("department", response.data.data.department);
+              sessionStorage.setItem(
+                "department",
+                response.data.data.department
+              );
               this.$store.commit({
                 type: "changeLoginInState",
                 isLoginIn: true
@@ -199,18 +202,32 @@ export default {
       }
     },
     getToken() {
-      if (utils.getUrlKey("token")) {
-        sessionStorage.setItem("sobeyToken", utils.getUrlKey("token"));
-        sessionStorage.setItem("siteCode", utils.getUrlKey("siteCode"));
-        this.getUserInfo(utils.getUrlKey("token"));
+      //这里有两种单点登录的方式,通过蓝云登录可以获取 token 参数,通过 oa 可以获取 sessionid 参数.
+      if (
+        (utils.getUrlKey("token") || utils.getUrlKey("sessionid")) &&
+        !sessionStorage.getItem("token")
+      ) {
+        if (utils.getUrlKey("token")) {
+          sessionStorage.setItem("sobeyToken", utils.getUrlKey("token"));
+          sessionStorage.setItem("siteCode", utils.getUrlKey("siteCode"));
+          this.getUserInfo(utils.getUrlKey("token"));
+        } else {
+          sessionStorage.setItem("oaToken", utils.getUrlKey("sessionid"));
+          this.getUserInfo(utils.getUrlKey("sessionid"));
+        }
       }
     },
     getUserInfo(token) {
       if (token) {
         this.$axios
-          .post(`http://10.20.50.124:8080/jtjk/sso`, {
-            token: token
-          })
+          .post(
+            token.length == 64
+              ? `http://10.20.50.124:8080/jtjk/sso`
+              : `http://10.20.50.124:8080/jtjk/sso2`,
+            {
+              token: token
+            }
+          )
           .then(res => {
             if (res.data.code == 200) {
               sessionStorage.setItem("token", res.data.data.tokenId);
