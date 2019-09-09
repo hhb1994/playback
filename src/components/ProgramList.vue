@@ -25,7 +25,7 @@ export default {
   },
   computed: {
     token: function() {
-      return sessionStorage.getItem("token")
+      return sessionStorage.getItem("token");
     },
     programIndex: {
       get: function() {
@@ -82,7 +82,7 @@ export default {
         .get(`http://10.20.50.124:8080/jtjk/programs/${channelCode}/${Date}`)
         .then(response => {
           if (response.data.code != 200) {
-            this.actionFailed("找不到当前频道的节目单");
+            this.$actionFailed("找不到当前频道的节目单");
             this.programList = [];
           } else {
             if (this.currentChannel.channelId >= 22) {
@@ -96,9 +96,7 @@ export default {
                 response.data.data[i].date = this.date;
                 response.data.data[
                   i
-                ].resourceUrl = `http://10.20.50.124/${shortName}/${year}/${month}/${day}/${
-                  response.data.data[i].name
-                }-${hours}${minutes}00.${type}`;
+                ].resourceUrl = `http://10.20.50.124/${shortName}/${year}/${month}/${day}/${response.data.data[i].name}-${hours}${minutes}00.${type}`;
               }
             } else if (
               this.currentChannel.channelId < 22 &&
@@ -113,9 +111,9 @@ export default {
               }
             } else {
               for (let i = 0; i < response.data.data.length; i++) {
-                response.data.data[i].resourceUrl = `http://${
-                  response.data.data[i].resourceUrl
-                }`;
+                response.data.data[
+                  i
+                ].resourceUrl = `http://${response.data.data[i].resourceUrl}`;
               }
             }
             this.programList = response.data.data;
@@ -192,7 +190,7 @@ export default {
 
     playFile(item, index) {
       if (index > this.programNumber - 1 && this.currentDate == item.date) {
-        this.actionFailed("此节目还没有收录");
+        this.$actionFailed("此节目还没有收录");
       } else {
         if (item.id !== this.newestProgram) {
           //统计点击量
@@ -258,21 +256,6 @@ export default {
       this.$store.commit({
         type: "changeProgramIndex",
         programIndex: index
-      });
-    },
-    actionSuccess(success) {
-      this.$notify({
-        title: "SUCCESS",
-        message: success,
-        type: "success",
-        position: "top-left"
-      });
-    },
-    actionFailed(fail) {
-      this.$notify.error({
-        title: "FAILED",
-        message: fail,
-        position: "top-left"
       });
     }
   },

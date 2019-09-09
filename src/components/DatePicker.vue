@@ -19,27 +19,10 @@ export default {
       currentDate: this.$moment().format("YYYY-MM-DD")
     };
   },
-  methods: {
-    actionSuccess(success) {
-      this.$notify({
-        title: "SUCCESS",
-        message: success,
-        type: "success",
-        position: "top-left"
-      });
-    },
-    actionFailed(fail) {
-      this.$notify.error({
-        title: "FAILED",
-        message: fail,
-        position: "top-left"
-      });
-    }
-  },
   watch: {
     date(data) {
       if (data > this.currentDate) {
-        this.actionFailed(`节目单查询的日期不能超过 ${this.currentDate}`);
+        this.$actionFailed(`节目单查询的日期不能超过 ${this.currentDate}`);
         this.date = "";
       } else {
         this.$store.commit({

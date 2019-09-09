@@ -210,21 +210,6 @@ export default {
         type: "changeTimeTravelState",
         isTimeTravel: false
       });
-    },
-    actionSuccess(success) {
-      this.$notify({
-        title: "SUCCESS",
-        message: success,
-        type: "success",
-        position: "top-left"
-      });
-    },
-    actionFailed(fail) {
-      this.$notify.error({
-        title: "FAILED",
-        message: fail,
-        position: "top-left"
-      });
     }
   },
   mounted() {

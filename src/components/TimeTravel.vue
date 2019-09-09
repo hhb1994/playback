@@ -114,7 +114,7 @@ export default {
         });
         this.timeTralvel();
       } else if (this.value > this.valueLimit) {
-        this.actionFailed("直播时移不能超过当前时间!");
+        this.$actionFailed("直播时移不能超过当前时间!");
         this.value = this.valueLimit;
       } else {
         return;
@@ -159,7 +159,7 @@ export default {
         })
         .catch(error => {
           console.log(error);
-          this.actionFailed("请求直播时移错误!");
+          this.$actionFailed("请求直播时移错误!");
           this.disabled = false;
           this.$store.commit({
             type: "changeLoadingState",
@@ -167,21 +167,6 @@ export default {
           });
         });
     },
-    actionSuccess(success) {
-      this.$notify({
-        title: "SUCCESS",
-        message: success,
-        type: "success",
-        position: "top-left"
-      });
-    },
-    actionFailed(fail) {
-      this.$notify.error({
-        title: "FAILED",
-        message: fail,
-        position: "top-left"
-      });
-    }
   },
   watch: {
     currentTime() {

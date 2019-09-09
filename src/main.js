@@ -12,6 +12,8 @@ import "videojs-contrib-hls";
 //elementUI 引入
 import "./plugins/element.js";
 
+import { actionSuccess, actionFailed } from "./utils/action";
+
 //axios 引入
 import axios from "axios";
 Vue.prototype.$axios = axios;
@@ -23,6 +25,9 @@ Vue.use(animated);
 Vue.use(VueVideoPlayer);
 
 Vue.prototype.$moment = moment;
+
+Vue.prototype.$actionSuccess = actionSuccess;
+Vue.prototype.$actionFailed = actionFailed;
 
 Vue.config.productionTip = false;
 

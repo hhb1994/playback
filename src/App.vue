@@ -70,6 +70,7 @@ import Sort from "./components/Sort.vue";
 import Info from "./components/Info.vue";
 import TimeTravel from "./components/TimeTravel.vue";
 import utils from "./assets/scripts/utils";
+import { userInfo } from "os";
 
 export default {
   name: "app",
@@ -123,7 +124,7 @@ export default {
   methods: {
     // 帮助
     help() {
-      this.actionFailed("请联系融媒体技术中心系统研发部!");
+      this.$actionFailed("请联系融媒体技术中心系统研发部!");
     },
     // 隐藏登录弹框
     hideDialog() {
@@ -134,7 +135,7 @@ export default {
     // 登录操作
     login() {
       if (this.username == "" || this.userpwd == "") {
-        this.actionFailed("账户与密码不能为空!");
+        this.$actionFailed("账户与密码不能为空!");
       } else {
         let username = this.username;
         let password = this.userpwd;
@@ -146,7 +147,7 @@ export default {
           )
           .then(response => {
             if (response.data.code != 200) {
-              this.actionFailed(
+              this.$actionFailed(
                 "登录失败!可能原因:1.账户或者密码错误;2.未开通权限;3.服务器错误"
               );
             } else {
@@ -186,7 +187,7 @@ export default {
                 })
                 .catch(err => console.log(err));
 
-              this.actionSuccess("登录成功!");
+              this.$actionSuccess("登录成功!");
             }
           })
           .catch(error => console.log(error));
@@ -219,44 +220,38 @@ export default {
     },
     getUserInfo(token) {
       if (token) {
+        let infoBody = {
+          session: null,
+          token: null
+        };
+        token.length == 64
+          ? ((infoBody.token = token), delete infoBody.session)
+          : ((infoBody.session = token), delete infoBody.token);
         this.$axios
           .post(
             token.length == 64
               ? `http://10.20.50.124:8080/jtjk/sso`
               : `http://10.20.50.124:8080/jtjk/sso2`,
-            {
-              token: token
-            }
+
+            infoBody
           )
           .then(res => {
             if (res.data.code == 200) {
               sessionStorage.setItem("token", res.data.data.tokenId);
               sessionStorage.setItem("name", res.data.data.name);
               sessionStorage.setItem("department", res.data.data.department);
-              this.actionSuccess("登录成功!");
+              this.$actionSuccess("登录成功!");
               this.$store.commit({
                 type: "changeLoginInState",
                 isLoginIn: true
               });
             }
+            else{
+              this.$actionFailed("单点登录失败,请尝试手动登录!")
+            }
           })
           .catch(err => console.log(err));
       }
-    },
-    actionSuccess(success) {
-      this.$notify({
-        title: "SUCCESS",
-        message: success,
-        type: "success",
-        position: "top-left"
-      });
-    },
-    actionFailed(fail) {
-      this.$notify.error({
-        title: "FAILED",
-        message: fail,
-        position: "top-left"
-      });
     },
     consoleLogo() {
       console.log("%cMOZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ8M", "color: blue");
