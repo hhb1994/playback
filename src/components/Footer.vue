@@ -1,7 +1,7 @@
 <template>
   <div id="footer">
     <div>
-      <p>DEVELOP BY 融媒体技术中心·系统研发部</p>
+      <p>DEVELOP BY 广播电视融媒体技术中心</p>
     </div>
   </div>
 </template>
