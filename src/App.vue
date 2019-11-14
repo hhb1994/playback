@@ -153,6 +153,7 @@ export default {
               sessionStorage.setItem("token", response.data.tokenId);
               sessionStorage.setItem("name", response.data.name);
               sessionStorage.setItem("department", response.data.department);
+              sessionStorage.setItem("isAdmin", response.data.isAdmin);
               this.$store.commit({
                 type: "changeLoginInState",
                 isLoginIn: true
@@ -205,6 +206,7 @@ export default {
               sessionStorage.setItem("token", res.data.tokenId);
               sessionStorage.setItem("name", res.data.name);
               sessionStorage.setItem("department", res.data.department);
+              sessionStorage.setItem("isAdmin", res.data.isAdmin);
               this.$actionSuccess("登录成功!");
               this.$store.commit({
                 type: "changeLoginInState",
@@ -253,7 +255,7 @@ export default {
   #information
     width 1390px
 #app
-  height 100%
+  height 100vh
   color white
   #container
     margin-top 30px
@@ -263,8 +265,8 @@ export default {
     margin-left 10%
     padding-top 10px
   #dialogForm
-    width 60%
-    margin-left 20%
+    width 50%
+    margin-left 25%
 .flex-center
   display flex
   justify-content center

@@ -16,6 +16,9 @@
             <div>
               <p>{{this.name}} - {{this.department}}</p>
             </div>
+            <div v-if="isAdmin=='true'">
+              <p style="cursor:pointer" @click="manage()">系统管理</p>
+            </div>
             <div>
               <el-button @click="logOut()" round>注销</el-button>
             </div>
@@ -29,6 +32,9 @@
 export default {
   name: "Header",
   computed: {
+    isAdmin() {
+      return sessionStorage.isAdmin;
+    },
     name: function() {
       return sessionStorage.getItem("name");
     },
@@ -48,6 +54,9 @@ export default {
     logOut() {
       location.href = location.href.split("?")[0];
       sessionStorage.clear();
+    },
+    manage() {
+      location.href = "http://jtjk.zrtg.com:10080";
     }
   }
 };
@@ -59,7 +68,7 @@ export default {
   background-color #409EFF
   color white
   position relative
-  p 
+  p
     font-weight bold
     font-size 16px
     padding-top 7px
