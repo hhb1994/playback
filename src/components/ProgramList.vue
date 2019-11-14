@@ -11,6 +11,7 @@
   </div>
 </template>
 <script>
+import { fileSetIp } from "./../config/config";
 export default {
   name: "ProgramList",
   data() {
@@ -69,8 +70,7 @@ export default {
     },
     programClass() {
       return function(index) {
-        return index > this.programNumber - 1 &&
-          (this.date == this.currentDate || this.date == null)
+        return index > this.programNumber - 1 && (this.date == this.currentDate || this.date == null)
           ? "programListNotActive"
           : "programListActive";
       };
@@ -78,45 +78,39 @@ export default {
   },
   methods: {
     getPrograms(channelCode, shortName, Date) {
-      this.$axios
-        .get(`http://10.20.50.124:8080/jtjk/programs/${channelCode}/${Date}`)
+      this.$req
+        .getProgram(`${channelCode}/${Date}`)
         .then(response => {
-          if (response.data.code != 200) {
+          if (response.code != 200) {
             this.$actionFailed("找不到当前频道的节目单");
             this.programList = [];
           } else {
+            let programList = response.data;
             if (this.currentChannel.channelId >= 22) {
               let year = Date.split("-")[0];
               let month = Date.split("-")[1];
               let day = Date.split("-")[2];
               let type = this.isVideo ? "mp4" : "mp3";
-              for (let i = 0; i < response.data.data.length; i++) {
-                let hours = response.data.data[i].startTime.split(":")[0];
-                let minutes = response.data.data[i].startTime.split(":")[1];
-                response.data.data[i].date = this.date;
-                response.data.data[
+
+              for (let i = 0; i < programList.length; i++) {
+                let hours = programList[i].startTime.split(":")[0];
+                let minutes = programList[i].startTime.split(":")[1];
+                programList[i].date = this.date;
+                programList[
                   i
-                ].resourceUrl = `http://10.20.50.124/${shortName}/${year}/${month}/${day}/${response.data.data[i].name}-${hours}${minutes}00.${type}`;
+                ].resourceUrl = `${fileSetIp}${shortName}/${year}/${month}/${day}/${programList[i].name}-${hours}${minutes}00.${type}`;
               }
-            } else if (
-              this.currentChannel.channelId < 22 &&
-              this.currentChannel.channelId > 11
-            ) {
-              for (let i = 0; i < response.data.data.length; i++) {
-                let url = response.data.data[i].resourceUrl.replace(
-                  /sd[/]/,
-                  "/"
-                );
-                response.data.data[i].resourceUrl = `http://${url}`;
+            } else if (this.currentChannel.channelId < 22 && this.currentChannel.channelId > 11) {
+              for (let i = 0; i < programList.length; i++) {
+                let url = programList[i].resourceUrl.replace(/sd[/]/, "/");
+                programList[i].resourceUrl = `http://${url}`;
               }
             } else {
-              for (let i = 0; i < response.data.data.length; i++) {
-                response.data.data[
-                  i
-                ].resourceUrl = `http://${response.data.data[i].resourceUrl}`;
+              for (let i = 0; i < programList.length; i++) {
+                programList[i].resourceUrl = `http://${programList[i].resourceUrl}`;
               }
             }
-            this.programList = response.data.data;
+            this.programList = programList;
             //获取当前频道/滚动
             this.$nextTick(() => {
               this.scrollList();
@@ -171,10 +165,7 @@ export default {
       this.timeId = setInterval(() => this.scrollList2(), 10000);
     },
     scrollList2() {
-      if (
-        this.programList[this.programNumber - 1].endTime <
-        this.$moment().format("HH:mm:ss")
-      ) {
+      if (this.programList[this.programNumber - 1].endTime < this.$moment().format("HH:mm:ss")) {
         this.programNumber++;
         this.newestProgram = this.programList[this.programNumber - 1].id;
         this.$store.commit({
@@ -195,18 +186,7 @@ export default {
         if (item.id !== this.newestProgram) {
           //统计点击量
           if (this.token) {
-            this.$axios
-              .post(
-                `http://10.20.50.124:8080/jtjk/click`,
-                {
-                  channelCode: this.currentChannel.channelId,
-                  program: item.name
-                },
-                {
-                  headers: { Authorization: this.token }
-                }
-              )
-              .catch(err => console.log(err));
+            this.$req.click({ channelCode: this.currentChannel.channelId, program: item.name });
           }
           // 修改时移状态
           this.$store.commit({
@@ -262,25 +242,13 @@ export default {
   watch: {
     currentChannel(data) {
       this.date == null
-        ? this.getPrograms(
-            data.channelId,
-            data.channelShortName,
-            this.currentDate
-          )
+        ? this.getPrograms(data.channelId, data.channelShortName, this.currentDate)
         : this.getPrograms(data.channelId, data.channelShortName, this.date);
     },
     date(data) {
       data == null
-        ? this.getPrograms(
-            this.$store.state.currentChannel.channelId,
-            this.$store.state.currentChannel.channelShortName,
-            this.currentDate
-          )
-        : this.getPrograms(
-            this.$store.state.currentChannel.channelId,
-            this.$store.state.currentChannel.channelShortName,
-            data
-          );
+        ? this.getPrograms(this.$store.state.currentChannel.channelId, this.$store.state.currentChannel.channelShortName, this.currentDate)
+        : this.getPrograms(this.$store.state.currentChannel.channelId, this.$store.state.currentChannel.channelShortName, data);
     }
   },
   beforeCreate() {}

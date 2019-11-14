@@ -66,26 +66,22 @@ export default {
       }
     },
     enterActiveClass() {
-      return this.isVideo
-        ? "animated slideInLeft faster"
-        : "animated slideInRight faster";
+      return this.isVideo ? "animated slideInLeft faster" : "animated slideInRight faster";
     },
     leaveActiveClass() {
-      return this.isVideo
-        ? "animated slideOutRight faster"
-        : "animated slideOutLeft faster";
+      return this.isVideo ? "animated slideOutRight faster" : "animated slideOutLeft faster";
     }
   },
   methods: {
     // 获取直播频道列表,并根据广播/电视分类
     getChannelList() {
-      this.$axios
-        .get("http://10.20.50.124:8080/jtjk/channels", { timeout: 5000 })
+      this.$req
+        .getChannel()
         .then(response => {
-          if (response.data.code != 200) {
+          if (response.code != 200) {
             console.log(response.data);
           } else {
-            let streamList = response.data.data;
+            let streamList = response.data;
             streamList.reverse();
             for (let i = 0; i < streamList.length; i++) {
               if (streamList[i].group.name == "arcvideo") {
@@ -97,11 +93,7 @@ export default {
                   channelShortName: videoChannelShortName,
                   videoImgSrc: require(`@/assets/icons/${streamList[i].id}.png`)
                 });
-                this.videoStream.push(
-                  "http://10.20.50.127:8081/" +
-                    videoChannelShortName +
-                    "/index.m3u8"
-                );
+                this.videoStream.push("http://10.20.50.127:8081/" + videoChannelShortName + "/index.m3u8");
               } else {
                 let audioChannelName = streamList[i].name.split("-")[0];
                 let audioChannelShortName = streamList[i].name.split("-")[1];
@@ -111,11 +103,7 @@ export default {
                   channelShortName: audioChannelShortName,
                   audioImgSrc: require(`@/assets/icons/${streamList[i].id}.png`)
                 });
-                this.audioStream.push(
-                  "http://10.20.50.127:8081/" +
-                    audioChannelShortName +
-                    "/index.m3u8"
-                );
+                this.audioStream.push("http://10.20.50.127:8081/" + audioChannelShortName + "/index.m3u8");
               }
             }
           }
@@ -176,33 +164,7 @@ export default {
     //统计频道点击信息
     registerChannel(id) {
       if (this.token) {
-        this.$axios
-          .post(
-            `http://10.20.50.124:8080/jtjk/click`,
-            { channelCode: id.channelId },
-            {
-              headers: { Authorization: this.token }
-            }
-          )
-          .catch(err => console.log(err));
-        this.$axios
-          .get(`http://10.20.50.124:8080/jtjk/token/${id.channelShortName}`, {
-            headers: { Authorization: this.token }
-          })
-          .then(res => {
-            if (res.data.code == 200) {
-              this.$store.commit({
-                type: "changeDownloadable",
-                downloadable: true
-              });
-            } else {
-              this.$store.commit({
-                type: "changeDownloadable",
-                downloadable: false
-              });
-            }
-          })
-          .catch(err => console.log(err));
+        this.$req.click({ channelCode: id.channelCode });
       }
     },
     backToLive() {

@@ -18,6 +18,11 @@ import { actionSuccess, actionFailed } from "./utils/action";
 import axios from "axios";
 Vue.prototype.$axios = axios;
 
+//引入封装的 api
+
+import {req} from "./http/api";
+Vue.prototype.$req = req;
+
 import animated from "animate.css";
 
 Vue.use(animated);

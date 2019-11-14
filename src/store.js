@@ -14,7 +14,6 @@ export default new Vuex.Store({
     isDialogVisible: false,
 
     isLoginIn: false,
-    downloadable: false,
     isAdmin: false,
 
     date: null,
@@ -49,10 +48,6 @@ export default new Vuex.Store({
     // 改变登录状态
     changeLoginInState(state, payload) {
       state.isLoginIn = payload.isLoginIn;
-    },
-    //控制下载是否显示
-    changeDownloadable(state, payload) {
-      state.downloadable = payload.downloadable;
     },
     //检查是否为管理员
     getAdminState(state, payload) {

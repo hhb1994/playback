@@ -6,7 +6,7 @@
     <div id="buttonGroup">
       <div class="flex">
         <div v-show="!isLoginIn">
-          <el-button @click="showDialog()" round>登录</el-button>
+          <el-button @click="showDialog()" round>登陆</el-button>
         </div>
         <transition
           enter-active-class="animated fadeInLeft faster"
@@ -59,8 +59,9 @@ export default {
   background-color #409EFF
   color white
   position relative
-  p
-    font-size 15px
+  p 
+    font-weight bold
+    font-size 16px
     padding-top 7px
     margin-right 10px
   h5

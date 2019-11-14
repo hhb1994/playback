@@ -12,16 +12,18 @@
       type="text"
       @click="showTimeTravel()"
       v-show="isVideo"
+      v-if="!isFile"
     >
       时移
       <i class="el-icon-arrow-right"></i>
     </el-button>
-    <a class="download" v-if="isLoginIn && downloadable && isFile" :href="fileUrl" download>下载
-      <i class="el-icon-download"></i>
-    </a>
+    <el-button class="download" type="text" v-if="isFile && isLoginIn" @click="downloadFile()">
+      <i class="el-icon-download"></i>下载
+    </el-button>
   </div>
 </template>
 <script>
+import utils from "./../utils/utils";
 export default {
   name: "Info",
   computed: {
@@ -48,19 +50,18 @@ export default {
         return this.$store.state.isLoginIn;
       }
     },
-    downloadable: {
-      get: function() {
-        return this.$store.state.downloadable;
-      }
-    },
     player: {
       get: function() {
         return this.$store.state.player;
       }
     },
     isFile: function() {
-      if (this.player.type == "video/mp4" || this.player.type == "audio/mp3") {
-        return true;
+      if (this.player) {
+        if (this.player.type == "video/mp4" || this.player.type == "audio/mp3") {
+          return true;
+        } else {
+          return false;
+        }
       } else {
         return false;
       }
@@ -72,6 +73,20 @@ export default {
         type: "changeTimeTravelState",
         isTimeTravel: true
       });
+    },
+    downloadFile() {
+      this.$req
+        .verifyPermission(this.$store.state.currentChannel.channelShortName)
+        .then(res => {
+          if (res.code !== 200) {
+            this.$actionFailed("您没有下载此频道节目的权限");
+          } else {
+            utils.downloadFile(this.currentProgram.resourceUrl);
+          }
+        })
+        .catch(() => {
+          this.$actionFailed("请求权限信息超时或出错!");
+        });
     }
   }
 };

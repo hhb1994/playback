@@ -35,23 +35,24 @@
       </div>
     </div>
     <Footer />
-    <el-dialog title="登录监听监看回放系统" :visible.sync="dialogVisible">
+    <el-dialog title="登陆监听监看回放系统" :visible.sync="dialogVisible">
       <div id="dialogForm">
         <el-form>
           <el-form-item label="账 户 :" label-width="60px">
-            <el-input v-model="username"></el-input>
+            <el-input v-model="username" placeholder="oa 账户名"></el-input>
           </el-form-item>
           <el-form-item label="密 码 :" label-width="60px">
-            <el-input v-model="userpwd" type="password"></el-input>
+            <el-input v-model="userpwd" type="password" placeholder="oa 密码"></el-input>
           </el-form-item>
           <el-form-item>
-            <el-button type="text" @click="help()">忘记密码?</el-button>
-            <span>|</span>
+            <el-button type="text" @click="help()">忘记密码? |</el-button>
             <el-button type="text" @click="help()">无法登陆?</el-button>
           </el-form-item>
-          <el-form-item id="buttonGroup">
-            <el-button @click="hideDialog()">取 消</el-button>
-            <el-button type="primary" @click="login()">确 定</el-button>
+          <el-form-item>
+            <el-button style="width:100%" @click="hideDialog()">取 消</el-button>
+          </el-form-item>
+          <el-form-item>
+            <el-button style="width:100%" type="primary" @click="login()">确 定</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -69,8 +70,7 @@ import DatePicker from "./components/DatePicker.vue";
 import Sort from "./components/Sort.vue";
 import Info from "./components/Info.vue";
 import TimeTravel from "./components/TimeTravel.vue";
-import utils from "./assets/scripts/utils";
-import { userInfo } from "os";
+import utils from "./utils/utils";
 
 export default {
   name: "app",
@@ -139,53 +139,29 @@ export default {
       } else {
         let username = this.username;
         let password = this.userpwd;
-        this.$axios
-          .post(
-            "http://10.20.50.124:8080/jtjk/token",
-            { username: username, password: password },
-            { timeout: 3000 }
-          )
+        this.$req
+          .login({
+            username: username,
+            password: password
+          })
           .then(response => {
-            if (response.data.code != 200) {
-              this.$actionFailed(
-                "登录失败!可能原因:1.账户或者密码错误;2.未开通权限;3.服务器错误"
-              );
+            if (response.code != 200) {
+              this.$actionFailed("登录失败!可能原因:1.账户或者密码错误;2.未开通权限;3.服务器错误");
             } else {
               this.username = "";
               this.userpwd = "";
-              sessionStorage.setItem("token", response.data.data.tokenId);
-              sessionStorage.setItem("name", response.data.data.name);
-              sessionStorage.setItem(
-                "department",
-                response.data.data.department
-              );
+              sessionStorage.setItem("token", response.data.tokenId);
+              sessionStorage.setItem("name", response.data.name);
+              sessionStorage.setItem("department", response.data.department);
               this.$store.commit({
                 type: "changeLoginInState",
                 isLoginIn: true
               });
               this.$store.commit({
                 type: "getAdminState",
-                isAdmin: response.data.data.isAdmin
+                isAdmin: response.data.isAdmin
               });
               this.hideDialog();
-              this.$axios
-                .get("http://10.20.50.124:8080/jtjk/token/zjws", {
-                  headers: { Authorization: response.data.data.tokenId }
-                })
-                .then(res => {
-                  if (res.data.code == 200) {
-                    this.$store.commit({
-                      type: "changeDownloadable",
-                      downloadable: true
-                    });
-                  } else {
-                    this.$store.commit({
-                      type: "changeDownloadable",
-                      downloadable: false
-                    });
-                  }
-                })
-                .catch(err => console.log(err));
 
               this.$actionSuccess("登录成功!");
             }
@@ -204,10 +180,7 @@ export default {
     },
     getToken() {
       //这里有两种单点登录的方式,通过蓝云登录可以获取 token 参数,通过 oa 可以获取 sessionid 参数.
-      if (
-        (utils.getUrlKey("token") || utils.getUrlKey("sessionid")) &&
-        !sessionStorage.getItem("token")
-      ) {
+      if ((utils.getUrlKey("token") || utils.getUrlKey("sessionid")) && !sessionStorage.getItem("token")) {
         if (utils.getUrlKey("token")) {
           sessionStorage.setItem("sobeyToken", utils.getUrlKey("token"));
           sessionStorage.setItem("siteCode", utils.getUrlKey("siteCode"));
@@ -224,30 +197,21 @@ export default {
           session: null,
           token: null
         };
-        token.length == 64
-          ? ((infoBody.token = token), delete infoBody.session)
-          : ((infoBody.session = token), delete infoBody.token);
-        this.$axios
-          .post(
-            token.length == 64
-              ? `http://10.20.50.124:8080/jtjk/sso`
-              : `http://10.20.50.124:8080/jtjk/sso2`,
-
-            infoBody
-          )
+        token.length == 64 ? ((infoBody.token = token), delete infoBody.session) : ((infoBody.session = token), delete infoBody.token);
+        this.$req
+          .sso(infoBody)
           .then(res => {
-            if (res.data.code == 200) {
-              sessionStorage.setItem("token", res.data.data.tokenId);
-              sessionStorage.setItem("name", res.data.data.name);
-              sessionStorage.setItem("department", res.data.data.department);
+            if (res.code == 200) {
+              sessionStorage.setItem("token", res.data.tokenId);
+              sessionStorage.setItem("name", res.data.name);
+              sessionStorage.setItem("department", res.data.department);
               this.$actionSuccess("登录成功!");
               this.$store.commit({
                 type: "changeLoginInState",
                 isLoginIn: true
               });
-            }
-            else{
-              this.$actionFailed("单点登录失败,请尝试手动登录!")
+            } else {
+              this.$actionFailed("单点登录失败,请尝试手动登录!");
             }
           })
           .catch(err => console.log(err));
@@ -299,10 +263,8 @@ export default {
     margin-left 10%
     padding-top 10px
   #dialogForm
-    width 50%
-    margin-left 25%
-    #buttonGroup
-      margin-left 40%
+    width 60%
+    margin-left 20%
 .flex-center
   display flex
   justify-content center

@@ -1,7 +1,12 @@
 <template>
   <div id="sort">
     <el-radio-group id="sortradio" :value="isVideo">
-      <el-radio-button :label="true" type="primary" round @click.native="switchStreamType(true)">电视</el-radio-button>
+      <el-radio-button
+        :label="true"
+        type="primary"
+        round
+        @click.native="switchStreamType(true)"
+      >电视</el-radio-button>
       <el-radio-button
         :label="false"
         type="primary"
@@ -77,7 +82,7 @@ export default {
           }
         });
       }
-    }
+    },
   }
 };
 </script>

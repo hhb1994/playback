@@ -29,43 +29,23 @@ export default {
   computed: {
     valueLimit: function() {
       return ~~(
-        (Date.parse(new Date()) -
-          Date.parse(
-            this.$moment().format("YYYY/MM/DD") +
-              " " +
-              this.timeTravelProgram.startTime
-          )) /
+        (Date.parse(new Date()) - Date.parse(this.$moment().format("YYYY/MM/DD") + " " + this.timeTravelProgram.startTime)) /
         10000
       );
     },
     max: function() {
       return ~~(
-        (Date.parse(
-          this.$moment().format("YYYY/MM/DD") +
-            " " +
-            this.timeTravelProgram.endTime
-        ) -
-          Date.parse(
-            this.$moment().format("YYYY/MM/DD") +
-              " " +
-              this.timeTravelProgram.startTime
-          )) /
+        (Date.parse(this.$moment().format("YYYY/MM/DD") + " " + this.timeTravelProgram.endTime) -
+          Date.parse(this.$moment().format("YYYY/MM/DD") + " " + this.timeTravelProgram.startTime)) /
         10000
       );
     },
     currentTime() {
-      let currentTime =
-        Date.parse(
-          this.$moment().format("YYYY/MM/DD") +
-            " " +
-            this.timeTravelProgram.startTime
-        ) +
-        this.value * 10000;
+      let currentTime = Date.parse(this.$moment().format("YYYY/MM/DD") + " " + this.timeTravelProgram.startTime) + this.value * 10000;
       let hour = this.addZero(new Date(currentTime).getHours());
       let minute = this.addZero(new Date(currentTime).getMinutes());
       let second = this.addZero(new Date(currentTime).getSeconds());
-      let timestamp =
-        this.year + this.month + this.day + hour + minute + second;
+      let timestamp = this.year + this.month + this.day + hour + minute + second;
       return timestamp;
     },
     currentChannel: {
@@ -121,16 +101,11 @@ export default {
       }
     }, 780),
     destoryStream() {
-      if (
-        this.streamToDestory.streamUri &&
-        this.streamToDestory.shortName
-      ) {
-        this.$axios
-          .get(
-            `http://10.20.50.124:8088/zbsy/CloseThread?m3u8Name=${this.streamToDestory.streamUri}&program=${this.streamToDestory.shortName}`,
-            { timeout: 20000 }
-          )
-          .catch(error => console.log(error));
+      if (this.streamToDestory.streamUri && this.streamToDestory.shortName) {
+        this.$req.destoryStream({
+          m3u8Name: this.streamToDestory.streamUri,
+          program: this.streamToDestory.shortName
+        });
       }
     },
     timeTralvel() {
@@ -139,17 +114,16 @@ export default {
         uri: this.currentTime,
         shortName: this.currentChannel.channelShortName
       });
-
-      this.$axios
-        .get(
-          `http://10.20.50.124:8088/zbsy/GetM3U8?timestamp=${this.currentTime}&program=${this.currentChannel.channelShortName}`,
-          { timeout: 20000 }
-        )
+      this.$req
+        .getStream({
+          timestamp: this.currentTime,
+          program: this.currentChannel.channelShortName
+        })
         .then(response => {
           this.disabled = false;
           this.$store.commit({
             type: "changeStream",
-            streamSrc: response.data.data.uri,
+            streamSrc: response.data.uri,
             streamType: "application/x-mpegURL"
           });
           this.$store.commit({
@@ -166,7 +140,7 @@ export default {
             isLoading: false
           });
         });
-    },
+    }
   },
   watch: {
     currentTime() {
