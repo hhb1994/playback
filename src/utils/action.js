@@ -10,6 +10,7 @@ function actionFailed(fail) {
   this.$notify.error({
     title: "FAILED",
     message: fail,
+    duration: 10000,
     position: "top-left"
   });
 }

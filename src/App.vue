@@ -219,6 +219,11 @@ export default {
           .catch(err => console.log(err));
       }
     },
+    checkIfIE() {
+      if(utils.getExplore(navigator.userAgent)=="IE"){
+        this.$actionFailed("为了获得更好的使用体验,请换用现代浏览器😊(推荐使用chrome/Firefox/360浏览器)")
+      }
+    },
     consoleLogo() {
       console.log("%cMOZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ8M", "color: blue");
       console.log("%cMZZZZZZZZZZZZO7+==?ZZZZZZZZZZZZZZM", "color: blue");
@@ -235,12 +240,22 @@ export default {
     }
   },
   mounted() {
+    this.checkIfIE();
     this.checkCookie();
     this.getToken();
     this.consoleLogo();
   },
   beforeDestroy() {
     sessionStorage.clear();
+  },
+  created: function() {
+    var _this = this;
+    document.onkeydown = () => {
+      let key = window.event.keyCode;
+      if (key == 13 && _this.dialogVisible) {
+        _this.login();
+      }
+    };
   }
 };
 </script>

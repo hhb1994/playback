@@ -77,48 +77,74 @@ export default {
     getChannelList() {
       this.$req
         .getChannel()
-        .then(response => {
-          if (response.code != 200) {
-            console.log(response.data);
+        .then(res => {
+          if (res.code != 200) {
+            this.$actionFailed("获取频道列表失败");
           } else {
-            let streamList = response.data;
-            streamList.reverse();
-            for (let i = 0; i < streamList.length; i++) {
-              if (streamList[i].group.name == "arcvideo") {
-                let videoChannelName = streamList[i].name.split("-")[0];
-                let videoChannelShortName = streamList[i].name.split("-")[1];
-                this.videoChannelList.push({
-                  channelName: videoChannelName,
-                  channelId: streamList[i].id,
-                  channelShortName: videoChannelShortName,
-                  videoImgSrc: require(`@/assets/icons/${streamList[i].id}.png`)
-                });
-                this.videoStream.push("http://10.20.50.127:8081/" + videoChannelShortName + "/index.m3u8");
-              } else {
-                let audioChannelName = streamList[i].name.split("-")[0];
-                let audioChannelShortName = streamList[i].name.split("-")[1];
+            let channelList = res.data;
+            channelList.reverse();
+            channelList
+              .filter(item => item.group.name == "audio")
+              .forEach(item => {
+                let audioChannelName = item.name.split("-")[0];
+                let audioChannelShortName = item.name.split("-")[1];
                 this.audioChannelList.push({
                   channelName: audioChannelName,
-                  channelId: streamList[i].id,
+                  channelId: item.id,
                   channelShortName: audioChannelShortName,
-                  audioImgSrc: require(`@/assets/icons/${streamList[i].id}.png`)
+                  audioImgSrc: require(`@/assets/icons/${item.id}.png`),
+                  stream: [
+                    {
+                      streamSrc: `http://10.20.50.127:8081/${audioChannelShortName}/index.m3u8`,
+                      streamType: "application/x-mpegURL"
+                    }
+                  ]
                 });
-                this.audioStream.push("http://10.20.50.127:8081/" + audioChannelShortName + "/index.m3u8");
+              });
+            channelList
+              .filter(item => item.group.name == "arcvideo")
+              .forEach(item => {
+                let listIndex = this.videoChannelList.findIndex(item2 => item2.channelName == item.name.substring(0, 4));
+                if (listIndex == -1) {
+                  this.videoChannelList.push({
+                    channelName: item.name.substring(0, 4),
+                    videoImgSrc: require(`@/assets/icons/${item.id}.png`),
+                    stream: [
+                      {
+                        channelId: item.id,
+                        streamType: "application/x-mpegURL",
+                        channelShortName: item.name.split("-")[1],
+                        streamSrc: `http://10.20.50.127:8081/${item.name.split("-")[1]}/index.m3u8`
+                      }
+                    ]
+                  });
+                } else {
+                  this.videoChannelList[listIndex].stream.push({
+                    channelId: item.id,
+                    streamType: "application/x-mpegURL",
+                    channelShortName: item.name.split("-")[1],
+                    streamSrc: `http://10.20.50.127:8081/${item.name.split("-")[1]}/index.m3u8`
+                  });
+                }
+              });
+            this.$store.commit({
+              type: "changeStream", 
+              streamList: this.videoChannelList[0].stream
+            });
+            this.$store.commit({
+              type: "getCurrentChannel",
+              currentChannel: {
+                channelName: this.videoChannelList[0].channelName,
+                channelId: this.videoChannelList[0].id,
+                channelShortName: this.videoChannelList[0].stream[0].channelShortName
               }
-            }
+            });
           }
         })
-        .catch(error => {
-          console.log(error);
+        .catch(err => {
+          this.$actionFailed(err);
         });
-      this.$store.commit({
-        type: "getCurrentChannel",
-        currentChannel: {
-          channelName: "浙江卫视标清",
-          channelId: 1,
-          channelShortName: "zjwssd"
-        }
-      });
+
       this.$store.commit({
         type: "getAllVideoStream",
         videoStream: this.videoStream
@@ -133,14 +159,14 @@ export default {
       if (this.isVideo) {
         this.$store.commit({
           type: "changeStream",
-          streamSrc: this.videoStream[index],
-          streamType: "application/x-mpegURL"
+          streamSrc: this.videoChannelList[index].stream[0].streamSrc,
+          streamType: this.videoChannelList[index].stream[0].streamType
         });
       } else {
         this.$store.commit({
           type: "changeStream",
-          streamSrc: this.audioStream[index],
-          streamType: "application/x-mpegURL"
+          streamSrc: this.audioChannelList[index].stream[0].streamSrc,
+          streamType: this.audioChannelList[index].stream[0].streamType
         });
       }
       // this.$store.commit({

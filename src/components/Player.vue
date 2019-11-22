@@ -30,15 +30,9 @@ export default {
         language: "zh-CN",
         aspectRatio: "16:9",
         fluid: true,
-        sources: [
-          {
-            type: "application/x-mpegURL",
-            src: this.$store.state.initStream
-          }
-        ],
-        poster: "",
-        notSupportedMessage:
-          "此视频暂无法播放，请联系融媒体技术中心系统研发部!",
+        // liveui:true,
+        sources: this.streamList,
+        notSupportedMessage: "此视频暂无法播放，请联系融媒体技术中心系统研发部!",
         controlBar: {
           timeDivider: true,
           durationDisplay: true,
@@ -49,24 +43,27 @@ export default {
     };
   },
   computed: {
-    player: {
-      get: function() {
-        return this.$refs.videoPlayer.player;
-      }
-    },
     isVideo: {
       get: function() {
         return this.$store.state.isVideo;
       }
+    },
+    streamList() {
+      let streamList = [];
+      this.$store.state.player.forEach(item => {
+        streamList.push({
+          src: item.streamSrc,
+          type: item.streamType
+        });
+      });
+      return streamList;
     }
   },
-  mounted() {
-    this.$store.commit({
-      type: "getPlayer",
-      player: this.player.options_.sources[0]
-    });
+  watch: {
+    streamList() {
+      this.playerOptions.sources = this.streamList;
+    }
   },
-  watch: {},
   methods: {}
 };
 </script>
