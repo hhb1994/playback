@@ -1,13 +1,8 @@
 import axios from "axios";
-
-
 axios.defaults.timeout = 10000;
-
-
 // http request 拦截器
 axios.interceptors.request.use(
   config => {
-    // config.headers['content-type'] = "application/json";
     if (sessionStorage.token) {
       config.headers["Authorization"] = sessionStorage.token;
     }
@@ -24,7 +19,6 @@ axios.interceptors.response.use(
    
   },
   err => {
-    // Notification.error({ title: "error", message: err });
     return Promise.reject(err);
   }
 );

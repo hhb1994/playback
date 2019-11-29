@@ -1,7 +1,7 @@
 <template>
   <div id="info">
     <span class="info">节目信息</span>
-    <span class="text">{{currentChannel}}</span>
+    <span class="text">{{currentChannel.channelName}}</span>
     <span class="text">{{currentProgram.date}}&nbsp;</span>
     <span class="text">{{currentProgram.startTime}}</span>
     <span class="text">{{currentProgram.name}}</span>
@@ -11,8 +11,7 @@
       class="showTimeTravel"
       type="text"
       @click="showTimeTravel()"
-      v-show="isVideo"
-      v-if="!isFile"
+      v-show="isVideo&&!isFile"
     >
       时移
       <i class="el-icon-arrow-right"></i>
@@ -32,7 +31,7 @@ export default {
     },
     currentChannel: {
       get: function() {
-        return this.$store.state.currentChannel.channelName;
+        return this.$store.state.currentChannel;
       }
     },
     currentProgram: {
@@ -50,18 +49,9 @@ export default {
         return this.$store.state.isLoginIn;
       }
     },
-    player: {
-      get: function() {
-        return this.$store.state.player;
-      }
-    },
     isFile: function() {
-      if (this.player) {
-        if (this.player.type == "video/mp4" || this.player.type == "audio/mp3") {
-          return true;
-        } else {
-          return false;
-        }
+      if (this.currentChannel.stream) {
+        return this.currentChannel.stream[0].streamType == "application/x-mpegURL" ? false : true;
       } else {
         return false;
       }
@@ -76,7 +66,7 @@ export default {
     },
     downloadFile() {
       this.$req
-        .verifyPermission(this.$store.state.currentChannel.channelShortName)
+        .verifyPermission(this.currentChannel.stream[0].channelShortName)
         .then(res => {
           if (res.code !== 200) {
             this.$actionFailed("您没有下载此频道节目的权限");

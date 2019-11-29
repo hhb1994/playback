@@ -1,12 +1,7 @@
 <template>
   <div id="sort">
     <el-radio-group id="sortradio" :value="isVideo">
-      <el-radio-button
-        :label="true"
-        type="primary"
-        round
-        @click.native="switchStreamType(true)"
-      >电视</el-radio-button>
+      <el-radio-button :label="true" type="primary" round @click.native="switchStreamType(true)">电视</el-radio-button>
       <el-radio-button
         :label="false"
         type="primary"
@@ -19,12 +14,6 @@
 <script>
 export default {
   name: "Sort",
-  data() {
-    return {
-      isTrue: true,
-      isFalse: false
-    };
-  },
   computed: {
     isLoginIn: {
       get: function() {
@@ -39,50 +28,58 @@ export default {
   },
   methods: {
     switchStreamType(streamType) {
+      //去除时移状态
       this.$store.commit({
         type: "changeTimeTravelState",
         isTimeTravel: false
       });
+      //切换直播源信息
       this.$store.commit({
         type: "switchStreamType",
         streamType: streamType
       });
+      //切换节目 index
       this.$store.commit({
         type: "changeChannelIndex",
         channelIndex: 0
       });
-      if (streamType) {
-        this.$store.commit({
-          type: "changeStream",
-          streamSrc: this.$store.state.initStream,
-          streamType: "application/x-mpegURL"
-        });
+      //切换直播流
+      let currentChannel = streamType ? this.$store.state.videoStream[0] : this.$store.state.audioStream[0];
+      this.$store.commit({
+        type: "getCurrentChannel",
+        currentChannel: currentChannel
+      });
+      // if (streamType) {
+      //   this.$store.commit({
+      //     type: "changeStream",
+      //     streamSrc: this.$store.state.initStream,
+      //     streamType: "application/x-mpegURL"
+      //   });
+      //   this.$store.commit({
+      //     type: "getCurrentChannel",
+      //     currentChannel: {
+      //       channelName: "浙江卫视标清",
+      //       channelId: 1,
+      //       channelShortName: "zjws"
+      //     }
+      //   });
+      // } else {
+      //   this.$store.commit({
+      //     type: "changeStream",
+      //     streamSrc: this.$store.state.initStream2,
+      //     streamType: "application/x-mpegURL"
+      //   });
 
-        this.$store.commit({
-          type: "getCurrentChannel",
-          currentChannel: {
-            channelName: "浙江卫视标清",
-            channelId: 1,
-            channelShortName: "zjws"
-          }
-        });
-      } else {
-        this.$store.commit({
-          type: "changeStream",
-          streamSrc: this.$store.state.initStream2,
-          streamType: "application/x-mpegURL"
-        });
-
-        this.$store.commit({
-          type: "getCurrentChannel",
-          currentChannel: {
-            channelName: "浙江之声",
-            channelId: 27,
-            channelShortName: "fm88"
-          }
-        });
-      }
-    },
+      //   this.$store.commit({
+      //     type: "getCurrentChannel",
+      //     currentChannel: {
+      //       channelName: "浙江之声",
+      //       channelId: 27,
+      //       channelShortName: "fm88"
+      //     }
+      //   });
+      // }
+    }
   }
 };
 </script>
@@ -95,8 +92,8 @@ export default {
 </style>
 <style>
 .el-radio-group {
-  width: 140px;
-  margin-left: 20%;
+  width: 120px;
+  margin-left: 6%;
   margin-bottom: 10px;
   margin-top: 10px;
 }

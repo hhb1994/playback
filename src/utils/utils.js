@@ -10,7 +10,7 @@ export default {
     const a = document.createElement("a");
     document.body.appendChild(a);
     a.href = url;
-    a.target = "_Blank"
+    a.target = "_Blank";
     a.download = "";
     a.click();
     document.body.removeChild(a);

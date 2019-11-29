@@ -58,10 +58,8 @@ export default {
         return this.$store.state.timeTravelProgram;
       }
     },
-    channelIndex: {
-      get: function() {
-        return this.$store.state.channelIndex;
-      }
+    channelIndex() {
+      return this.$store.state.channelIndex;
     },
     streamToDestory: {
       get: function() {
@@ -78,9 +76,10 @@ export default {
         type: "changeTimeTravelState",
         isTimeTravel: false
       });
+      // console.log(this.$store.state.videoStream[this.channelIndex]);
       this.$store.commit({
-        type: "changeStream",
-        streamSrc: this.$store.state.videoStream[this.channelIndex]
+        type: "getCurrentChannel",
+        currentChannel: this.$store.state.videoStream[this.channelIndex]
       });
       this.destoryStream();
     },
@@ -117,14 +116,26 @@ export default {
       this.$req
         .getStream({
           timestamp: this.currentTime,
-          program: this.currentChannel.channelShortName
+          program: this.currentChannel.stream[0].channelShortName
         })
         .then(response => {
           this.disabled = false;
+          let channelId = this.currentChannel.stream[0].channelId;
+          let channelShortName = this.currentChannel.stream[0].channelShortName;
+          let streamType = this.currentChannel.stream[0].streamType;
+          let currentChannel = { ...this.currentChannel };
+          // currentChannel.stream = response.data.uri;
+          currentChannel.stream = [
+            {
+              channelId: channelId,
+              channelShortName: channelShortName,
+              streamType: streamType,
+              streamSrc: response.data.uri
+            }
+          ];
           this.$store.commit({
-            type: "changeStream",
-            streamSrc: response.data.uri,
-            streamType: "application/x-mpegURL"
+            type: "getCurrentChannel",
+            currentChannel: currentChannel
           });
           this.$store.commit({
             type: "changeLoadingState",

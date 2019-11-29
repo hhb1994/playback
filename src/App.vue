@@ -11,7 +11,7 @@
       <div>
         <Player />
       </div>
-      <div>
+      <div style="width:149px">
         <Sort />
         <ChannelList />
       </div>
@@ -221,7 +221,7 @@ export default {
     },
     checkIfIE() {
       if(utils.getExplore(navigator.userAgent)=="IE"){
-        this.$actionFailed("为了获得更好的使用体验,请换用现代浏览器😊(推荐使用chrome/Firefox/360浏览器)")
+        this.$actionFailed("为了获得更好的使用体验)")
       }
     },
     consoleLogo() {
@@ -276,9 +276,6 @@ export default {
     margin-top 30px
     display flex
     justify-content center
-  #notLogin
-    margin-left 10%
-    padding-top 10px
   #dialogForm
     width 50%
     margin-left 25%

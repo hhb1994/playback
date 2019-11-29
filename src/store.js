@@ -6,9 +6,6 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     isVideo: true,
-    player: [],
-    initStream: "http://10.20.50.127:8081/zjwssd/index.m3u8",
-    initStream2: "http://10.20.50.127:8081/fm88/index.m3u8",
     videoStream: [],
     audioStream: [],
     isDialogVisible: false,
@@ -17,7 +14,7 @@ export default new Vuex.Store({
     isAdmin: false,
 
     date: null,
-    currentChannel: [],
+    currentChannel: {},
     currentProgram: [],
     timeTravelProgram: [],
 
@@ -53,14 +50,17 @@ export default new Vuex.Store({
     getAdminState(state, payload) {
       state.isAdmin = payload.isAdmin;
     },
-    // 改变播放源格式和链接
-    changeStream(state, payload) {
-      state.player = payload.streamList;
-    },
+
     // 获取当前要播放的频道
     getCurrentChannel(state, payload) {
       state.currentChannel = payload.currentChannel;
     },
+
+    //修改当前播放频道的播放源(播放文件)
+    changeCurrentChannelType(state, payload) {
+      state.currentChannel.stream = payload.fileInfo;
+    },
+
     //获取当前正在播放的节目
     getCurrentProgram(state, payload) {
       state.currentProgram = payload.currentProgram;

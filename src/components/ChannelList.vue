@@ -11,7 +11,7 @@
           <li
             v-for="(item,index) in videoChannelList"
             :key="index"
-            @click="changeStream(index),getCurrentChannel(item),bindClass(index),backToLive(),registerChannel(item)"
+            @click="getCurrentChannel(item),bindClass(index),backToLive(),registerChannel(item)"
             :class="{'channelActive':channelIndex === index}"
           >
             <img :src="item.videoImgSrc" />
@@ -24,7 +24,7 @@
           <li
             v-for="(item,index) in audioChannelList"
             :key="index"
-            @click="changeStream(index),getCurrentChannel(item),bindClass(index),registerChannel(item)"
+            @click="getCurrentChannel(item),bindClass(index),registerChannel(item)"
             :class="{'channelActive':channelIndex === index}"
           >
             <img :src="item.audioImgSrc" />
@@ -41,9 +41,7 @@ export default {
   data() {
     return {
       videoChannelList: [],
-      videoStream: [],
-      audioChannelList: [],
-      audioStream: []
+      audioChannelList: []
     };
   },
   computed: {
@@ -90,13 +88,13 @@ export default {
                 let audioChannelShortName = item.name.split("-")[1];
                 this.audioChannelList.push({
                   channelName: audioChannelName,
-                  channelId: item.id,
-                  channelShortName: audioChannelShortName,
                   audioImgSrc: require(`@/assets/icons/${item.id}.png`),
                   stream: [
                     {
                       streamSrc: `http://10.20.50.127:8081/${audioChannelShortName}/index.m3u8`,
-                      streamType: "application/x-mpegURL"
+                      streamType: "application/x-mpegURL",
+                      channelId: item.id,
+                      channelShortName: audioChannelShortName
                     }
                   ]
                 });
@@ -128,59 +126,31 @@ export default {
                 }
               });
             this.$store.commit({
-              type: "changeStream", 
-              streamList: this.videoChannelList[0].stream
+              type: "getCurrentChannel",
+              currentChannel: this.videoChannelList[0]
             });
             this.$store.commit({
-              type: "getCurrentChannel",
-              currentChannel: {
-                channelName: this.videoChannelList[0].channelName,
-                channelId: this.videoChannelList[0].id,
-                channelShortName: this.videoChannelList[0].stream[0].channelShortName
-              }
+              type: "getAllVideoStream",
+              videoStream: this.videoChannelList
+            });
+            this.$store.commit({
+              type: "getAllAudioStream",
+              audioStream: this.audioChannelList
             });
           }
         })
         .catch(err => {
           this.$actionFailed(err);
         });
+    },
 
-      this.$store.commit({
-        type: "getAllVideoStream",
-        videoStream: this.videoStream
-      });
-      this.$store.commit({
-        type: "getAllAudioStream",
-        audioStream: this.audioStream
-      });
-    },
-    // 切换直播源
-    changeStream(index) {
-      if (this.isVideo) {
-        this.$store.commit({
-          type: "changeStream",
-          streamSrc: this.videoChannelList[index].stream[0].streamSrc,
-          streamType: this.videoChannelList[index].stream[0].streamType
-        });
-      } else {
-        this.$store.commit({
-          type: "changeStream",
-          streamSrc: this.audioChannelList[index].stream[0].streamSrc,
-          streamType: this.audioChannelList[index].stream[0].streamType
-        });
-      }
-      // this.$store.commit({
-      //   type: "changeDate",
-      //   date: null
-      // });
-    },
     bindClass(index) {
       this.$store.commit({
         type: "changeChannelIndex",
         channelIndex: index
       });
     },
-    // 提交当前正在播放的频道信息
+    // 提交当前正在播放的频道信息和直播流
     getCurrentChannel(currentChannel) {
       this.$store.commit({
         type: "getCurrentChannel",
@@ -188,9 +158,9 @@ export default {
       });
     },
     //统计频道点击信息
-    registerChannel(id) {
+    registerChannel(item) {
       if (this.token) {
-        this.$req.click({ channelCode: id.channelCode });
+        this.$req.click({ channelCode: item.stream[0].channelId });
       }
     },
     backToLive() {
@@ -216,7 +186,7 @@ export default {
   #channelList
     height 488px
 #channelList
-  width 164px
+  width 134px
   color white
   margin-left 10px
   overflow-y auto

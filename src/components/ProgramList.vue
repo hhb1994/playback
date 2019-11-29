@@ -33,10 +33,8 @@ export default {
         return this.$store.state.programIndex;
       }
     },
-    currentChannel: {
-      get: function() {
-        return this.$store.state.currentChannel;
-      }
+    currentChannel() {
+      return this.$store.state.currentChannel;
     },
     currentProgram: {
       get: function() {
@@ -53,15 +51,11 @@ export default {
         return this.$store.state.isVideo;
       }
     },
-    channelIndex: {
-      get: function() {
-        return this.$store.state.channelIndex;
-      }
+    channelIndex() {
+      return this.$store.state.channelIndex;
     },
-    videoStream: {
-      get: function() {
-        return this.$store.state.videoStream;
-      }
+    videoStream() {
+      return this.$store.state.videoStream;
     },
     audioStream: {
       get: function() {
@@ -86,12 +80,12 @@ export default {
             this.programList = [];
           } else {
             let programList = response.data;
-            if (this.currentChannel.channelId >= 22) {
+            let channelId = this.currentChannel.stream[0].channelId;
+            if (channelId >= 22) {
               let year = Date.split("-")[0];
               let month = Date.split("-")[1];
               let day = Date.split("-")[2];
               let type = this.isVideo ? "mp4" : "mp3";
-
               for (let i = 0; i < programList.length; i++) {
                 let hours = programList[i].startTime.split(":")[0];
                 let minutes = programList[i].startTime.split(":")[1];
@@ -100,7 +94,7 @@ export default {
                   i
                 ].resourceUrl = `${fileSetIp}${shortName}/${year}/${month}/${day}/${programList[i].name}-${hours}${minutes}00.${type}`;
               }
-            } else if (this.currentChannel.channelId < 22 && this.currentChannel.channelId > 11) {
+            } else if (channelId < 22 && channelId > 11) {
               for (let i = 0; i < programList.length; i++) {
                 let url = programList[i].resourceUrl.replace(/sd[/]/, "/");
                 programList[i].resourceUrl = `http://${url}`;
@@ -118,8 +112,8 @@ export default {
             });
           }
         })
-        .catch(error => {
-          console.log(error);
+        .catch(err => {
+          this.$actionFailed(err);
         });
     },
     scrollList() {
@@ -165,93 +159,104 @@ export default {
       this.timeId = setInterval(() => this.scrollList2(), 10000);
     },
     scrollList2() {
-      if (this.programList[this.programNumber - 1].endTime < this.$moment().format("HH:mm:ss")) {
-        this.programNumber++;
-        this.newestProgram = this.programList[this.programNumber - 1].id;
-        this.$store.commit({
-          type: "getCurrentProgram",
-          currentProgram: this.programList[this.programNumber - 1]
-        });
-        this.$store.commit({
-          type: "getTimeTravelProgram",
-          timeTravelProgram: this.programList[this.programNumber - 1]
-        });
-      }
-    },
-
-    playFile(item, index) {
-      if (index > this.programNumber - 1 && this.currentDate == item.date) {
-        this.$actionFailed("此节目还没有收录");
-      } else {
-        if (item.id !== this.newestProgram) {
-          //统计点击量
-          if (this.token) {
-            this.$req.click({ channelCode: this.currentChannel.channelId, program: item.name });
-          }
-          // 修改时移状态
-          this.$store.commit({
-            type: "changeTimeTravelState",
-            isTimeTravel: false
-          });
-          if (this.isVideo) {
-            this.$store.commit({
-              type: "changeStream",
-              streamSrc: item.resourceUrl,
-              streamType: "video/mp4"
-            });
-          } else {
-            this.$store.commit({
-              type: "changeStream",
-              streamSrc: item.resourceUrl,
-              streamType: "audio/mp3"
-            });
-          }
-          this.$store.commit({
-            type: "getCurrentProgram",
-            currentProgram: item
-          });
-        } else {
-          // 点击最后一个节目返回直播
+      if (this.programList[this.programNumber - 1]) {
+        if (this.programList[this.programNumber - 1].endTime < this.$moment().format("HH:mm:ss")) {
+          this.programNumber++;
+          this.newestProgram = this.programList[this.programNumber - 1].id;
           this.$store.commit({
             type: "getCurrentProgram",
             currentProgram: this.programList[this.programNumber - 1]
           });
+          this.$store.commit({
+            type: "getTimeTravelProgram",
+            timeTravelProgram: this.programList[this.programNumber - 1]
+          });
+        }
+      }
+    },
+    calClick(program) {
+      if (this.token) {
+        this.$req.click({ channelCode: this.currentChannel.stream[0].channelId, program: program });
+      }
+    },
+    changeTimeTravelState() {
+      this.$store.commit({
+        type: "changeTimeTravelState",
+        isTimeTravel: false
+      });
+    },
+    submitCurrentProgram(item) {
+      this.$store.commit({
+        type: "getCurrentProgram",
+        currentProgram: item
+      });
+    },
+    playFile(item, index) {
+      if (index > this.programNumber - 1 && this.currentDate == item.date) {
+        this.$actionFailed("此节目还没有收录");
+      } else {
+        //提交当前节目
+        this.submitCurrentProgram(item);
+        if (item.id == this.newestProgram && this.currentDate == item.date) {
+          //点击当前节目回到直播
           if (this.isVideo) {
             this.$store.commit({
-              type: "changeStream",
-              streamSrc: this.videoStream[this.channelIndex],
-              streamType: "application/x-mpegURL"
+              type: "getCurrentChannel",
+              currentChannel: this.videoStream[this.channelIndex]
             });
           } else {
             this.$store.commit({
-              type: "changeStream",
-              streamSrc: this.audioStream[this.channelIndex],
-              streamType: "application/x-mpegURL"
+              type: "getCurrentChannel",
+              currentChannel: this.audioStream[this.channelIndex]
             });
           }
+        } else {
+          //统计点击量
+          this.calClick(item.name);
+          // 修改时移状态
+          this.changeTimeTravelState();
+          //拼接文件地址 fuck
+          //提交文件更改
+          let streamType = this.isVideo ? "video/mp4" : "audio/mp3";
+          let channelId = this.currentChannel.stream[0].channelId;
+          let channelShortName = this.currentChannel.stream[0].channelShortName;
+          let currentChannel = { ...this.currentChannel };
+          currentChannel.stream = [
+            {
+              channelId: channelId,
+              channelShortName: channelShortName,
+              streamType: streamType,
+              streamSrc: item.resourceUrl
+            }
+          ];
+          this.$store.commit({
+            type: "getCurrentChannel",
+            currentChannel: currentChannel
+          });
         }
       }
     },
     bindClass(index) {
+      // if (index <= this.programNumber - 1 && this.currentDate == item.date) {
       this.$store.commit({
         type: "changeProgramIndex",
         programIndex: index
       });
+      // }
     }
   },
   watch: {
-    currentChannel(data) {
-      this.date == null
-        ? this.getPrograms(data.channelId, data.channelShortName, this.currentDate)
-        : this.getPrograms(data.channelId, data.channelShortName, this.date);
+    currentChannel(channel) {
+      if (channel.stream[0].streamType == "application/x-mpegURL") {
+        let programDate = this.date == null ? this.currentDate : this.date;
+        this.getPrograms(channel.stream[0].channelId, channel.stream[0].channelShortName, programDate);
+      }
     },
-    date(data) {
-      data == null
-        ? this.getPrograms(this.$store.state.currentChannel.channelId, this.$store.state.currentChannel.channelShortName, this.currentDate)
-        : this.getPrograms(this.$store.state.currentChannel.channelId, this.$store.state.currentChannel.channelShortName, data);
+    date(changedDate) {
+      let programDate = changedDate == null ? this.currentDate : changedDate;
+      this.getPrograms(this.currentChannel.stream[0].channelId, this.currentChannel.stream[0].channelShortName, programDate);
     }
-  },
-  beforeCreate() {}
+  }
 };
 </script>
 <style lang="stylus" scoped>
@@ -265,11 +270,10 @@ export default {
   #programlist
     height 485px
 #programlist
-  margin-left 5px
   cursor pointer
   color white
   overflow-y auto
-  width 210px
+  width 200px
   border-bottom 1px solid black
   border-right 1px solid black
   ul li

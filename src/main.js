@@ -2,38 +2,17 @@ import Vue from "vue";
 import App from "./App.vue";
 import store from "./store";
 import moment from "moment";
-
-//视频播放插件
-import VueVideoPlayer from "vue-video-player";
 import "video.js/dist/video-js.css";
-import "vue-video-player/src/custom-theme.css";
-import "videojs-contrib-hls";
-
-//elementUI 引入
 import "./plugins/element.js";
-
 import { actionSuccess, actionFailed } from "./utils/action";
-
-//axios 引入
-import axios from "axios";
-Vue.prototype.$axios = axios;
-
 //引入封装的 api
-
 import {req} from "./http/api";
 Vue.prototype.$req = req;
-
 import animated from "animate.css";
-
 Vue.use(animated);
-
-Vue.use(VueVideoPlayer);
-
 Vue.prototype.$moment = moment;
-
 Vue.prototype.$actionSuccess = actionSuccess;
 Vue.prototype.$actionFailed = actionFailed;
-
 Vue.config.productionTip = false;
 
 new Vue({

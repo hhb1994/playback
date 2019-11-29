@@ -24,16 +24,13 @@ export default {
       if (data > this.currentDate) {
         this.$actionFailed(`节目单查询的日期不能超过 ${this.currentDate}`);
         this.date = "";
-      } else {
+      } else if (data) {
         this.$store.commit({
           type: "changeDate",
           date: data
         });
       }
     }
-  },
-  mounted() {
-    // this.$store.commit({ type: "changeDate", date: this.currentDate });
   }
 };
 </script>
@@ -42,7 +39,7 @@ export default {
   width: 185px;
   padding-top: 10px;
   padding-bottom: 10px;
-  padding-left: 15px;
+  
   padding-right: 15px;
   background-color: black;
   border-top-right-radius: 25px;
