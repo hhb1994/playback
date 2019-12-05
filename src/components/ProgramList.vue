@@ -216,6 +216,7 @@ export default {
           // 修改时移状态
           this.changeTimeTravelState();
           //拼接文件地址 fuck
+         
           //提交文件更改
           let streamType = this.isVideo ? "video/mp4" : "audio/mp3";
           let channelId = this.currentChannel.stream[0].channelId;

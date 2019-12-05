@@ -221,7 +221,7 @@ export default {
     },
     checkIfIE() {
       if(utils.getExplore(navigator.userAgent)=="IE"){
-        this.$actionFailed("为了获得更好的使用体验)")
+        this.$actionFailed("为了获得更好的使用体验,请换用现代浏览器")
       }
     },
     consoleLogo() {

@@ -1,4 +1,4 @@
-FROM harbor.zrtg.com/jtjk/nginx:v1.0
+FROM nginx
 
 ENV LANG C.UTF-8
 

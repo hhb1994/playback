@@ -11,7 +11,9 @@ import {
   Slider,
   Loading,
   RadioButton,
-  RadioGroup
+  RadioGroup,
+  MessageBox,
+  Radio
 } from "element-ui";
 
 Vue.use(Button);
@@ -25,4 +27,6 @@ Vue.use(DatePicker);
 Vue.use(ButtonGroup);
 Vue.use(Slider);
 Vue.use(Loading);
+Vue.use(Radio);
 Vue.prototype.$notify = Notification;
+Vue.prototype.$messageBox = MessageBox;

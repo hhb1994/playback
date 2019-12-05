@@ -123,6 +123,7 @@ export default {
                     channelShortName: item.name.split("-")[1],
                     streamSrc: `http://10.20.50.127:8081/${item.name.split("-")[1]}/index.m3u8`
                   });
+                  this.videoChannelList[listIndex].stream.reverse();
                 }
               });
             this.$store.commit({

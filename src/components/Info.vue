@@ -16,18 +16,49 @@
       时移
       <i class="el-icon-arrow-right"></i>
     </el-button>
-    <el-button class="download" type="text" v-if="isFile && isLoginIn" @click="downloadFile()">
+    <el-button class="download" type="text" v-if="isFile && isLoginIn" @click="verifyDownload()">
       <i class="el-icon-download"></i>下载
     </el-button>
+    <el-dialog :visible.sync="downloadVisible" title="选择下载文件清晰度">
+      <el-button
+        :disabled="this.streamList.length==1"
+        @click="downloadFile(currentProgram.resourceUrl)"
+      >高清</el-button>
+      <el-button @click="downloadFile(sdFileUrl)">标清</el-button>
+    </el-dialog>
   </div>
 </template>
 <script>
 import utils from "./../utils/utils";
 export default {
   name: "Info",
+  data() {
+    return {
+      downloadVisible: false
+    };
+  },
   computed: {
-    fileUrl: function() {
-      return this.currentProgram.resourceUrl;
+    streamList() {
+      if (this.isVideo) {
+        if (this.$store.state.videoStream[this.$store.state.channelIndex]) {
+          return this.$store.state.videoStream[this.$store.state.channelIndex].stream;
+        } else {
+          return [];
+        }
+      } else {
+        if (this.$store.state.audioStream[this.$store.state.channelIndex]) {
+          return this.$store.state.audioStream[this.$store.state.channelIndex].stream;
+        } else {
+          return [];
+        }
+      }
+    },
+    sdFileUrl() {
+      let fileUrl = this.currentProgram.resourceUrl;
+      if (this.streamList.length == 2) {
+        fileUrl = fileUrl.replace(this.streamList[0].channelShortName, this.streamList[1].channelShortName);
+      }
+      return fileUrl;
     },
     currentChannel: {
       get: function() {
@@ -64,19 +95,24 @@ export default {
         isTimeTravel: true
       });
     },
-    downloadFile() {
+    verifyDownload() {
       this.$req
         .verifyPermission(this.currentChannel.stream[0].channelShortName)
         .then(res => {
           if (res.code !== 200) {
             this.$actionFailed("您没有下载此频道节目的权限");
           } else {
-            utils.downloadFile(this.currentProgram.resourceUrl);
+            this.downloadVisible = true;
+            // utils.downloadFile(this.currentProgram.resourceUrl);
           }
         })
         .catch(() => {
           this.$actionFailed("请求权限信息超时或出错!");
         });
+    },
+    downloadFile(url) {
+      utils.downloadFile(url);
+      this.downloadVisible = false;
     }
   }
 };
