@@ -161,7 +161,9 @@ export default {
     scrollList2() {
       if (this.programList[this.programNumber - 1]) {
         if (this.programList[this.programNumber - 1].endTime < this.$moment().format("HH:mm:ss")) {
-          this.programNumber++;
+          if (this.programNumber < this.programList.length) {
+            this.programNumber++;
+          }
           this.newestProgram = this.programList[this.programNumber - 1].id;
           this.$store.commit({
             type: "getCurrentProgram",
@@ -216,7 +218,7 @@ export default {
           // 修改时移状态
           this.changeTimeTravelState();
           //拼接文件地址 fuck
-         
+
           //提交文件更改
           let streamType = this.isVideo ? "video/mp4" : "audio/mp3";
           let channelId = this.currentChannel.stream[0].channelId;
