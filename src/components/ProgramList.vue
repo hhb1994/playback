@@ -28,6 +28,9 @@ export default {
     token: function() {
       return sessionStorage.getItem("token");
     },
+    isLoginIn: function() {
+      return this.$store.state.isLoginIn;
+    },
     programIndex: {
       get: function() {
         return this.$store.state.programIndex;
@@ -177,7 +180,7 @@ export default {
       }
     },
     calClick(program) {
-      if (this.token) {
+      if (this.isLoginIn) {
         this.$req.click({ channelCode: this.currentChannel.stream[0].channelId, program: program });
       }
     },

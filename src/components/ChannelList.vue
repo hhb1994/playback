@@ -160,7 +160,7 @@ export default {
     },
     //统计频道点击信息
     registerChannel(item) {
-      if (this.token) {
+      if (this.isLoginIn) {
         this.$req.click({ channelCode: item.stream[0].channelId });
       }
     },
