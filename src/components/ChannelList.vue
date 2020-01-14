@@ -161,7 +161,7 @@ export default {
     //统计频道点击信息
     registerChannel(item) {
       if (this.isLoginIn) {
-        this.$req.click({ channelCode: item.stream[0].channelId });
+        this.$req.click({ channelCode: item.stream[0].channelId,type:"live" });
       }
     },
     backToLive() {

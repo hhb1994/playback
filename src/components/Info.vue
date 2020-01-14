@@ -113,6 +113,7 @@ export default {
     downloadFile(url) {
       utils.downloadFile(url);
       this.downloadVisible = false;
+      this.$req.click({ channelCode: this.currentChannel.stream[0].channelId, program: this.currentProgram.name, type: "download" });
     }
   }
 };

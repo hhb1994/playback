@@ -56,7 +56,8 @@ export default {
       sessionStorage.clear();
     },
     manage() {
-      location.href = `http://jtjk.zrtg.com:10080?token=${sessionStorage.getItem("token")}`;
+      // location.href = `http://jtjk.zrtg.com:10080?token=${sessionStorage.getItem("token")}`;
+      window.open(`http://jtjk.zrtg.com:10080?token=${sessionStorage.getItem("token")}`,"_blank")
     }
   }
 };

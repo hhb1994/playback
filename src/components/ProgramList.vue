@@ -181,7 +181,7 @@ export default {
     },
     calClick(program) {
       if (this.isLoginIn) {
-        this.$req.click({ channelCode: this.currentChannel.stream[0].channelId, program: program });
+        this.$req.click({ channelCode: this.currentChannel.stream[0].channelId, program: program, type: "replay" });
       }
     },
     changeTimeTravelState() {
