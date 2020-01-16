@@ -1,5 +1,5 @@
 <template>
-  <div id="programlist">
+  <div id="programlist" ref="programlist">
     <ul>
       <li
         v-for="(item,index) in programList"
@@ -19,9 +19,9 @@ export default {
       programList: [],
       currentDate: this.$moment().format("YYYY-MM-DD"),
       currentTime: this.$moment().format("YYYY-MM-DDHH:mm:ss"),
+      currentProgramTime: this.$moment().format("HH:mm:ss"),
       newestProgram: null,
-      programNumber: null,
-      timeId: null
+      timer: null
     };
   },
   computed: {
@@ -67,10 +67,30 @@ export default {
     },
     programClass() {
       return function(index) {
-        return index > this.programNumber - 1 && (this.date == this.currentDate || this.date == null)
+        return index > this.currentProgramIndex && (this.date == this.currentDate || this.date == null)
           ? "programListNotActive"
           : "programListActive";
       };
+    },
+    currentProgramIndex() {
+      let index = this.programList.findIndex(item => {
+        return this.currentProgramTime >= item.startTime && this.currentProgramTime <= item.endTime;
+      });
+      if (index == -1) {
+        if (this.programList.length != 0) {
+          if (this.currentProgramTime > this.programList[this.programList.length - 1].endTime) {
+            index = this.programList.length - 1;
+          } else {
+            index =
+              this.programList.findIndex(item => {
+                return this.currentProgramTime <= item.startTime;
+              }) - 1;
+          }
+        } else {
+          index = 0;
+        }
+      }
+      return index;
     }
   },
   methods: {
@@ -111,7 +131,6 @@ export default {
             //获取当前频道/滚动
             this.$nextTick(() => {
               this.scrollList();
-              this.scrollListInTime();
             });
           }
         })
@@ -120,64 +139,23 @@ export default {
         });
     },
     scrollList() {
-      this.programNumber = null;
-      for (let i = 0; i < this.programList.length; i++) {
-        if (this.programList[i].startTime > this.$moment().format("HH:mm:ss")) {
-          this.programNumber = i;
-          // 滚动
-          document.getElementById("programlist").scrollTo({
-            behavior: "smooth",
-            top: 40 * (this.programNumber - 3)
-          });
-          break;
-        }
-      }
-      if (this.programNumber == null) {
-        this.programNumber = this.programList.length; // 滚动
-        document.getElementById("programlist").scrollTo({
-          behavior: "smooth",
-          top: 40 * (this.programNumber - 3)
-        });
-        document.getElementById("programlist").scrollTo({
-          behavior: "smooth",
-          top: document.getElementById("programlist").scrollHeight
-        });
-      }
-      this.newestProgram = this.programList[this.programNumber - 1].id;
+      this.$refs.programlist.scrollTo({
+        behavior: "smooth",
+        top: 40 * (this.currentProgramIndex - 2)
+      });
+      this.newestProgram = this.programList[this.currentProgramIndex].id;
       this.$store.commit({
         type: "getCurrentProgram",
-        currentProgram: this.programList[this.programNumber - 1]
+        currentProgram: this.programList[this.currentProgramIndex]
       });
       this.$store.commit({
         type: "getTimeTravelProgram",
-        timeTravelProgram: this.programList[this.programNumber - 1]
+        timeTravelProgram: this.programList[this.currentProgramIndex]
       });
       this.$store.commit({
         type: "changeProgramIndex",
-        programIndex: this.programNumber - 1
+        programIndex: this.currentProgramIndex
       });
-    },
-    scrollListInTime() {
-      clearTimeout(this.timeId);
-      this.timeId = setInterval(() => this.scrollList2(), 10000);
-    },
-    scrollList2() {
-      if (this.programList[this.programNumber - 1]) {
-        if (this.programList[this.programNumber - 1].endTime < this.$moment().format("HH:mm:ss")) {
-          if (this.programNumber < this.programList.length) {
-            this.programNumber++;
-          }
-          this.newestProgram = this.programList[this.programNumber - 1].id;
-          this.$store.commit({
-            type: "getCurrentProgram",
-            currentProgram: this.programList[this.programNumber - 1]
-          });
-          this.$store.commit({
-            type: "getTimeTravelProgram",
-            timeTravelProgram: this.programList[this.programNumber - 1]
-          });
-        }
-      }
     },
     calClick(program) {
       if (this.isLoginIn) {
@@ -197,7 +175,7 @@ export default {
       });
     },
     playFile(item, index) {
-      if (index > this.programNumber - 1 && this.currentDate == item.date) {
+      if (index > this.currentProgramIndex && this.currentDate == item.date) {
         this.$actionFailed("此节目还没有收录");
       } else {
         //提交当前节目
@@ -243,12 +221,10 @@ export default {
       }
     },
     bindClass(index) {
-      // if (index <= this.programNumber - 1 && this.currentDate == item.date) {
       this.$store.commit({
         type: "changeProgramIndex",
         programIndex: index
       });
-      // }
     }
   },
   watch: {
@@ -261,7 +237,18 @@ export default {
     date(changedDate) {
       let programDate = changedDate == null ? this.currentDate : changedDate;
       this.getPrograms(this.currentChannel.stream[0].channelId, this.currentChannel.stream[0].channelShortName, programDate);
+    },
+    currentProgramIndex(newVal, oldVal) {
+      this.scrollList();
     }
+  },
+  mounted() {
+    this.timer = setInterval(() => {
+      this.currentProgramTime = this.$moment().format("HH:mm:ss");
+    }, 1000);
+  },
+  beforeDestroy() {
+    clearInterval(this.timer);
   }
 };
 </script>

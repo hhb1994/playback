@@ -23,15 +23,13 @@ export default {
       disabled: false,
       year: this.$moment().format("YYYY"),
       month: this.$moment().format("MM"),
-      day: this.$moment().format("DD")
+      day: this.$moment().format("DD"),
+      currentDateTime: Date.parse(new Date())
     };
   },
   computed: {
     valueLimit: function() {
-      return ~~(
-        (Date.parse(new Date()) - Date.parse(this.$moment().format("YYYY/MM/DD") + " " + this.timeTravelProgram.startTime)) /
-        10000
-      );
+      return ~~((this.currentDateTime - Date.parse(this.$moment().format("YYYY/MM/DD") + " " + this.timeTravelProgram.startTime)) / 10000);
     },
     max: function() {
       return ~~(
@@ -133,6 +131,7 @@ export default {
               streamSrc: response.data.uri
             }
           ];
+          // console.log(currentChannel);
           this.$store.commit({
             type: "getCurrentChannel",
             currentChannel: currentChannel
@@ -142,8 +141,7 @@ export default {
             isLoading: false
           });
         })
-        .catch(error => {
-          console.log(error);
+        .catch(() => {
           this.$actionFailed("请求直播时移错误!");
           this.disabled = false;
           this.$store.commit({
@@ -155,13 +153,24 @@ export default {
   },
   watch: {
     currentTime() {
-      if (this.value != this.valueLimit) {
+      if (this.value != this.valueLimit && this.value != 0) {
         this.beginTimeTravel();
+      }
+    },
+    timeTravelProgram(newVal, oldVal) {
+      if (newVal.startTime != oldVal.startTime) {
+        this.value = 0;
       }
     }
   },
   mounted() {
     this.value = this.valueLimit;
+    this.timer = setInterval(() => {
+      this.currentDateTime = Date.parse(new Date());
+    }, 1000);
+  },
+  beforeDestroy() {
+    clearInterval(this.timer);
   }
 };
 </script>
