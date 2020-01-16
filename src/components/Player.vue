@@ -10,7 +10,7 @@
         ></video>
       </div>
       <div ref="audioCover" id="audioCover">
-        <canvas :width="cWidth" :height="cHeight" id="canvas"></canvas>
+        <!-- <canvas :width="cWidth" :height="cHeight" id="canvas"></canvas> -->
         <!-- <AudioVisualization :player="$refs.videoPlayer" /> -->
       </div>
     </div>
@@ -75,17 +75,28 @@ export default {
       audioInput: null,
       canvasCtx: null,
       cHeight: 0,
-      cWidth: 0
+      cWidth: 0,
+      player: null
     };
   },
   mounted() {
     this.player = videojs(this.$refs.videoPlayer, this.playerOptions, () => {
       this.player.controlBar.addChild(this.controlBtn);
     });
-    this.resize();
-    window.onresize = () => {
-      this.resize();
-    };
+    this.$nextTick(() => {
+      this.$refs.videoPlayer.addEventListener("timeupdate", e => {
+        // console.log(e);
+        // console.log(this.$refs.videoPlayer.currentTime);
+        this.$store.commit({
+          type: "getFilePlayCurrentTime",
+          filePlayCurrentTime: Math.floor(this.$refs.videoPlayer.currentTime)
+        });
+      });
+    });
+    // this.resize();
+    // window.onresize = () => {
+    //   this.resize();
+    // };
   },
   beforeDestroy() {
     window.removeEventListener("resize");
@@ -160,7 +171,6 @@ export default {
       //   this.analyser.connect(this.scriptProcessor);
       //   this.scriptProcessor.connect(this.audioContext.destination);
       //   this.audioInput.connect(this.audioContext.destination);
-
       //   // this.audioInput.connect(this.audioContext.destination);
       // } else {
       //   // this.canvasCtx.clearRect(0, 0, this.cWidth, this.cHeight);

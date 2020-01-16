@@ -19,6 +19,7 @@
     <el-button class="download" type="text" v-if="isFile && isLoginIn" @click="verifyDownload()">
       <i class="el-icon-download"></i>下载
     </el-button>
+    <span v-if="isFile" class="text" style="margin-left:20px">(实际播放时间:{{filePlayCurrentDate}})</span>
     <el-dialog :visible.sync="downloadVisible" title="选择下载文件清晰度">
       <el-button
         :disabled="this.streamList.length==1"
@@ -86,6 +87,13 @@ export default {
       } else {
         return false;
       }
+    },
+    filePlayCurrentTime() {
+      return this.$store.state.filePlayCurrentTime;
+    },
+    filePlayCurrentDate() {
+      let currDate = this.isVideo ? this.currentProgram.date : this.$moment().format("YYYY-MM-DD");
+      return this.$moment(Date.parse(currDate + " " + this.currentProgram.startTime) + 1000 * this.filePlayCurrentTime).format("HH:mm:ss");
     }
   },
   methods: {

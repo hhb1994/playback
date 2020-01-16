@@ -23,7 +23,8 @@ export default new Vuex.Store({
 
     isLoading: false,
     isTimeTravel: false,
-    streamToDestory: {}
+    streamToDestory: {},
+    filePlayCurrentTime: 0
   },
   mutations: {
     // 登录弹出框显示
@@ -97,6 +98,10 @@ export default new Vuex.Store({
     getStreamToDestory(state, payload) {
       state.streamToDestory.streamUri = payload.uri;
       state.streamToDestory.shortName = payload.shortName;
+    },
+    //获取正在播放的文件相对时间
+    getFilePlayCurrentTime(state, payload) {
+      state.filePlayCurrentTime = payload.filePlayCurrentTime;
     }
   }
 });
