@@ -14,5 +14,13 @@ function actionFailed(fail) {
     position: "top-left"
   });
 }
+function info(notice) {
+  this.$notify.info({
+    title: "通知",
+    message: notice,
+    duration: 0,
+    position: "top-left"
+  });
+}
 
-export { actionSuccess, actionFailed };
+export { actionSuccess, actionFailed, info };

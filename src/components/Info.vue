@@ -93,7 +93,7 @@ export default {
     },
     filePlayCurrentDate() {
       let currDate = this.isVideo ? this.currentProgram.date : this.$moment().format("YYYY-MM-DD");
-      return this.$moment(Date.parse(currDate + " " + this.currentProgram.startTime) + 1000 * this.filePlayCurrentTime).format("HH:mm:ss");
+      return this.$moment(Date.parse(currDate + " " + this.currentProgram.startTime) + 1000 * this.filePlayCurrentTime-30000).format("HH:mm:ss");
     }
   },
   methods: {

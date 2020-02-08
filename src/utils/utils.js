@@ -36,11 +36,11 @@ export default {
       : 0;
     // 根据关系进行判断
     if (Sys.ie) return "IE";
-    if (Sys.edge) return "EDGE: " + Sys.edge;
-    if (Sys.firefox) return "Firefox: " + Sys.firefox;
-    if (Sys.chrome) return "Chrome: " + Sys.chrome;
-    if (Sys.opera) return "Opera: " + Sys.opera;
-    if (Sys.safari) return "Safari: " + Sys.safari;
+    if (Sys.edge) return "EDGE:" + Sys.edge;
+    if (Sys.firefox) return "Firefox:" + Sys.firefox;
+    if (Sys.chrome) return "Chrome:" + Sys.chrome;
+    if (Sys.opera) return "Opera:" + Sys.opera;
+    if (Sys.safari) return "Safari:" + Sys.safari;
     return "Unkonwn";
   }
 };

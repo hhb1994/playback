@@ -220,8 +220,9 @@ export default {
       }
     },
     checkIfIE() {
-      if(utils.getExplore(navigator.userAgent)=="IE"){
-        this.$actionFailed("为了获得更好的使用体验,请换用现代浏览器")
+      console.log(utils.getExplore(navigator.userAgent));
+      if (!/(Chrome|Firefox)/.test(utils.getExplore(navigator.userAgent))) {
+        this.$info("为获得更好的使用体验，建议换用其它浏览器，如谷歌（CHROME）、火狐.");
       }
     },
     consoleLogo() {
