@@ -220,7 +220,6 @@ export default {
       }
     },
     checkIfIE() {
-      console.log(utils.getExplore(navigator.userAgent));
       if (!/(Chrome|Firefox)/.test(utils.getExplore(navigator.userAgent))) {
         this.$info("为获得更好的使用体验，建议换用其它浏览器，如谷歌（CHROME）、火狐.");
       }

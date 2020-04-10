@@ -21,11 +21,11 @@ import videojs from "video.js";
 import video_zhCN from "video.js/dist/lang/zh-CN.json";
 videojs.addLanguage("zh-CN", video_zhCN);
 import { ControlBtn } from "./../plugins/videojs";
-import AudioVisualization from "./AudioVisualization";
+// import AudioVisualization from "./AudioVisualization";
 export default {
   name: "Player",
   components: {
-    AudioVisualization
+    // AudioVisualization
   },
   computed: {
     isVideo: {
@@ -84,7 +84,7 @@ export default {
       this.player.controlBar.addChild(this.controlBtn);
     });
     this.$nextTick(() => {
-      this.$refs.videoPlayer.addEventListener("timeupdate", e => {
+      this.$refs.videoPlayer.addEventListener("timeupdate", () => {
         // console.log(e);
         // console.log(this.$refs.videoPlayer.currentTime);
         this.$store.commit({
@@ -97,9 +97,6 @@ export default {
     // window.onresize = () => {
     //   this.resize();
     // };
-  },
-  beforeDestroy() {
-    window.removeEventListener("resize");
   },
   methods: {
     resize() {
@@ -133,6 +130,7 @@ export default {
     }
   },
   beforeDestroy() {
+    window.removeEventListener("resize");
     if (this.player) {
       this.player.dispose();
     }
