@@ -67,18 +67,25 @@ export default {
     },
     programClass() {
       return function(index) {
-        return index > this.currentProgramIndex && (this.date == this.currentDate || this.date == null)
+        return index > this.currentProgramIndex &&
+          (this.date == this.currentDate || this.date == null)
           ? "programListNotActive"
           : "programListActive";
       };
     },
     currentProgramIndex() {
       let index = this.programList.findIndex(item => {
-        return this.currentProgramTime >= item.startTime && this.currentProgramTime <= item.endTime;
+        return (
+          this.currentProgramTime >= item.startTime &&
+          this.currentProgramTime <= item.endTime
+        );
       });
       if (index == -1) {
         if (this.programList.length != 0) {
-          if (this.currentProgramTime > this.programList[this.programList.length - 1].endTime) {
+          if (
+            this.currentProgramTime >
+            this.programList[this.programList.length - 1].endTime
+          ) {
             index = this.programList.length - 1;
           } else {
             index =
@@ -124,7 +131,9 @@ export default {
               }
             } else {
               for (let i = 0; i < programList.length; i++) {
-                programList[i].resourceUrl = `http://${programList[i].resourceUrl}`;
+                programList[
+                  i
+                ].resourceUrl = `http://${programList[i].resourceUrl}`;
               }
             }
             this.programList = programList;
@@ -159,7 +168,11 @@ export default {
     },
     calClick(program) {
       if (this.isLoginIn) {
-        this.$req.click({ channelCode: this.currentChannel.stream[0].channelId, program: program, type: "replay" });
+        this.$req.click({
+          channelCode: this.currentChannel.stream[0].channelId,
+          program: program,
+          type: "replay"
+        });
       }
     },
     changeTimeTravelState() {
@@ -213,6 +226,19 @@ export default {
               streamSrc: item.resourceUrl
             }
           ];
+          if (this.currentChannel.stream.length == 2) {
+            let fileUrl = this.currentProgram.resourceUrl;
+            fileUrl = fileUrl.replace(
+              this.currentChannel.stream[0].channelShortName,
+              this.currentChannel.stream[1].channelShortName
+            );
+            currentChannel.stream.push({
+              channelId: channelId,
+              channelShortName: channelShortName,
+              streamType: streamType,
+              streamSrc: fileUrl
+            });
+          }
           this.$store.commit({
             type: "getCurrentChannel",
             currentChannel: currentChannel
@@ -231,14 +257,22 @@ export default {
     currentChannel(channel) {
       if (channel.stream[0].streamType == "application/x-mpegURL") {
         let programDate = this.date == null ? this.currentDate : this.date;
-        this.getPrograms(channel.stream[0].channelId, channel.stream[0].channelShortName, programDate);
+        this.getPrograms(
+          channel.stream[0].channelId,
+          channel.stream[0].channelShortName,
+          programDate
+        );
       }
     },
     date(changedDate) {
       let programDate = changedDate == null ? this.currentDate : changedDate;
-      this.getPrograms(this.currentChannel.stream[0].channelId, this.currentChannel.stream[0].channelShortName, programDate);
+      this.getPrograms(
+        this.currentChannel.stream[0].channelId,
+        this.currentChannel.stream[0].channelShortName,
+        programDate
+      );
     },
-    currentProgramIndex(newVal, oldVal) {
+    currentProgramIndex() {
       this.scrollList();
     }
   },

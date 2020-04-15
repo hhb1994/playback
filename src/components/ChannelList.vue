@@ -153,6 +153,8 @@ export default {
     },
     // 提交当前正在播放的频道信息和直播流
     getCurrentChannel(currentChannel) {
+      // console.log(currentChannel);
+      
       this.$store.commit({
         type: "getCurrentChannel",
         currentChannel: currentChannel
