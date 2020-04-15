@@ -234,7 +234,7 @@ export default {
             );
             currentChannel.stream.push({
               channelId: channelId,
-              channelShortName: channelShortName,
+              channelShortName: this.currentChannel.stream[1].channelShortName,
               streamType: streamType,
               streamSrc: fileUrl
             });
